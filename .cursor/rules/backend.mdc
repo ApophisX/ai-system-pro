@@ -1,0 +1,12 @@
+---
+description: NestJS 后端开发规范
+globs: system/ai-system-api/**/*
+alwaysApply: false
+---
+
+# Backend (NestJS) 规范
+
+**完整规范**：参考 `system/ai-system-api/skills/SKILL.md`（或聊天中 @backend-nestjs 引用）。简要规范见 `system/ai-system-api/docs/README.md`（架构、编码、红线、ADR）。
+
+[skill](/system/ai-system-api/skills/SKILL.md)
+[skill](/system/ai-system-api/docs/README.md)

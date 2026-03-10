@@ -1,0 +1,7 @@
+/**
+ * 举报限制常量
+ */
+export const REPORT_LIMIT_PER_USER_PER_ASSET_24H = 3;
+export const REPORT_LIMIT_PER_ASSET_PER_HOUR = 100;
+export const REPORT_DESCRIPTION_MIN_LENGTH = 10;
+export const REPORT_IMAGES_MAX_COUNT = 3;

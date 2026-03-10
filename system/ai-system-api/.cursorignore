@@ -1,0 +1,3 @@
+dist/           # 目录
+.env*
+cert/

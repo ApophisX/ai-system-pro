@@ -1,0 +1,27 @@
+---
+description: 测试规范
+globs: "**/*.spec.ts","**/*.test.ts","**/*.e2e-spec.ts","**/__tests__/**","**/test/**"
+alwaysApply: false
+---
+
+# QA 测试规范
+
+## 用例结构
+
+- **Arrange-Act-Assert**：先准备数据，再执行操作，最后断言
+- **单一断言**：每个 `it` 只验证一个行为，便于定位失败
+
+## 依赖与数据
+
+- **Mock 外部依赖**：数据库、HTTP、Redis 等用 Mock，保持测试独立可重复
+- **测试 fixture**：使用测试数据文件或 factory，不依赖生产数据
+
+## 测试层级（API）
+
+- **单元测试**：Service 层核心逻辑，`*.spec.ts` 与源文件同目录
+- **集成/E2E**：API 接口测试，`test/*.e2e-spec.ts`，用 Supertest + NestJS TestingModule
+
+## 技术栈
+
+- **API**：Jest + Supertest（system/ai-system-api）
+- **Web E2E**：Playwright 或 Cypress（待接入）

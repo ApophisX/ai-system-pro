@@ -1,0 +1,12 @@
+---
+description: React + MUI 前端开发规范
+globs: system/ai-system-web/**/*
+alwaysApply: false
+---
+
+# Frontend (React + MUI) 规范
+
+- API 调用封装在项目内 services/api 模块，不散落 fetch
+- 类型在项目内定义，或参考 system/ai-system-api 的 DTO
+- UI 使用 MUI，可复用组件放 src/components
+- 组件按功能/页面组织，保持单一职责

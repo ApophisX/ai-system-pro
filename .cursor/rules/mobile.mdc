@@ -1,0 +1,12 @@
+---
+description: Flutter 移动端开发规范
+globs: system/ai-system-app/**/*
+alwaysApply: false
+---
+
+# Mobile (Flutter) 规范
+
+- 目录：lib/screens/、lib/widgets/、lib/services/
+- 状态管理统一（Provider/Riverpod/Bloc 选一）
+- API 与 Web 共用，请求/响应格式一致
+- 参考 system/ai-system-api 的 DTO 定义 Dart 模型
