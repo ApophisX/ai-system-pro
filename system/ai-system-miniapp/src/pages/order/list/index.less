@@ -1,0 +1,63 @@
+// orderList.less
+
+// 隐藏滚动条（美观）
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+  color: transparent;
+}
+
+// 列表项错峰入场动画
+.list-item-anim {
+  opacity: 0;
+  animation: slideInUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+// 利用 nth-child 自动延迟，让前10个元素依次出现
+.list-item-anim:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.list-item-anim:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.list-item-anim:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.list-item-anim:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.list-item-anim:nth-child(5) {
+  animation-delay: 0.25s;
+}
+// ...更多可以依此类推
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Tab 下划线动画
+.tab-active {
+  position: relative;
+  font-weight: bold;
+  color: #0d9488; // teal-600
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -6px; // Adjust based on padding
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background: #0d9488;
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+}

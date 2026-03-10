@@ -1,0 +1,30 @@
+// 3. 错误摇晃动画 (Shake)
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+// 4. Checkbox 自定义样式 (Taro默认的太丑，这里微调)
+// 注意：Taro/微信小程序的checkbox样式较难完全覆盖，通常建议用View模拟或者接受默认
+.custom-checkbox {
+  transform: scale(0.7);
+}

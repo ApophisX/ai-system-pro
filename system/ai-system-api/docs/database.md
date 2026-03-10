@@ -67,4 +67,4 @@
 ## 5. 关联文档
 
 - [架构设计](./architecture.md)
-- [项目文件结构](../doc/file_structure.md)
+- [编码规范](./coding-standards.md)

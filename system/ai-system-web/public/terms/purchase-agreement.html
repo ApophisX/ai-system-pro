@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>商品支付协议 - 藏宝壳</title>
+    <style>
+      :root {
+        --text-primary: #1a1a1a;
+        --text-secondary: #4a4a4a;
+        --border-color: #e0e0e0;
+        --bg-highlight: #f8f9fa;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --text-primary: #e8e8e8;
+          --text-secondary: #b0b0b0;
+          --border-color: #404040;
+          --bg-highlight: #2a2a2a;
+        }
+      }
+      * {
+        box-sizing: border-box;
+        user-select: none;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+          'Microsoft YaHei', sans-serif;
+        line-height: 1.75;
+        color: var(--text-primary);
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 24px 16px 48px;
+        font-size: 15px;
+      }
+      .background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        z-index: -1;
+      }
+      @media (prefers-color-scheme: dark) {
+        .background { background: #2a2a2a; }
+      }
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        margin: 0 0 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid var(--border-color);
+      }
+      h2 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 28px 0 12px;
+        color: var(--text-primary);
+      }
+      p {
+        margin: 0 0 12px;
+        text-align: justify;
+        color: var(--text-secondary);
+      }
+      .meta {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 24px;
+      }
+      .clause {
+        margin-bottom: 20px;
+      }
+      .clause-num {
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      ul {
+        margin: 8px 0 16px;
+        padding-left: 24px;
+      }
+      li {
+        margin-bottom: 6px;
+        color: var(--text-secondary);
+      }
+      .highlight-box {
+        background: var(--bg-highlight);
+        border-left: 4px solid #1976d2;
+        padding: 16px;
+        margin: 16px 0;
+        border-radius: 0 4px 4px 0;
+      }
+      .signature-section {
+        margin-top: 40px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border-color);
+      }
+      .signature-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .signature-item {
+        min-width: 140px;
+      }
+      .signature-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 4px;
+      }
+      .signature-value {
+        font-weight: 500;
+      }
+      @media print {
+        body {
+          padding: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>商品购买与支付协议</h1>
+
+    <div class="meta">
+      <p>更新日期：2026年3月6日</p>
+      <p>生效日期：2026年3月6日</p>
+    </div>
+
+    <p>
+      本协议适用于您在藏宝壳平台购买商品并完成支付的交易场景。您在订单页点击“提交订单/立即支付”并完成支付，即视为您已阅读并同意本协议。
+    </p>
+
+    <h2>一、定义与交易主体</h2>
+    <div class="clause">
+      <ul>
+        <li><strong>平台</strong>：藏宝壳平台运营者蝶析信息技术（苏州）有限公司。</li>
+        <li><strong>买方</strong>：通过平台下单并支付货款的用户。</li>
+        <li><strong>卖方</strong>：商品销售主体，分为平台自营和第三方商家两类。</li>
+        <li><strong>自营订单</strong>：订单页标注“自营”，平台为卖方并承担卖方责任。</li>
+        <li><strong>商家订单</strong>：订单页标注商家名称，您与该商家建立买卖合同关系，平台提供网络交易平台服务。</li>
+      </ul>
+    </div>
+
+    <h2>二、适用范围与协议构成</h2>
+    <div class="clause">
+      <p>
+        本协议与《用户协议》、商品详情页规则、订单确认页约定、售后规则共同构成完整交易约定。若条款冲突，以更具体、更新且合法有效的约定为准。
+      </p>
+    </div>
+
+    <h2>三、价格、费用与发票</h2>
+    <div class="clause">
+      <ul>
+        <li>订单金额包括商品价款及运费（如有），以支付页面实际展示为准。</li>
+        <li>平台服务费（如有）以页面公示和商家协议为准，不额外向买方重复收取。</li>
+        <li>买方有权依法索取发票，发票开具主体为对应卖方（自营订单由平台开具，商家订单由商家依法开具）。</li>
+      </ul>
+    </div>
+
+    <h2>四、支付与资金处理</h2>
+    <div class="clause">
+      <ul>
+        <li>买方应通过平台支持的支付方式付款。支付成功后订单状态变更为“已支付”。</li>
+        <li>平台可基于交易安全、争议处理需要进行资金托管或延迟结算。</li>
+        <li>到账时间受银行及支付机构处理周期影响。</li>
+      </ul>
+    </div>
+
+    <h2>五、发货、收货与风险转移</h2>
+    <div class="clause">
+      <ul>
+        <li>卖方应在订单约定时限内发货，并提供可查询的物流信息（如适用）。</li>
+        <li>买方应及时验货。发现破损、少件、错发或与描述不符的，应在平台规定期限内提交证据并申请售后。</li>
+        <li>商品交付及风险转移规则以适用法律及订单约定执行。</li>
+      </ul>
+    </div>
+
+    <h2>六、退款、退货与七日无理由</h2>
+    <div class="clause">
+      <ul>
+        <li>支付前取消订单，无需退款；支付后取消按订单状态及平台规则处理。</li>
+        <li>因质量问题、错发漏发、描述严重不符导致退货退款的，由卖方依法承担相应责任及合理运费。</li>
+        <li>符合“七日无理由退货”法定条件的，买方可依法申请；不适用七日无理由的商品以法律规定和页面明示为准。</li>
+        <li>退款默认原路退回；无法原路退回时，买方应配合提供有效收款信息。</li>
+      </ul>
+    </div>
+
+    <h2>七、商家与平台责任边界</h2>
+    <div class="clause">
+      <ul>
+        <li>自营订单中，平台承担卖方责任并依法履行售后义务。</li>
+        <li>商家订单中，商家承担卖方责任（商品质量、售后、发票、违法宣传等）。</li>
+        <li>平台依法履行平台经营者义务，包括商家资质审核、规则公示、风险提示、投诉受理、交易信息留存等。</li>
+      </ul>
+    </div>
+
+    <h2>八、争议处理与证据规则</h2>
+    <div class="clause">
+      <ul>
+        <li>买卖双方发生争议时，应先协商；协商不成可申请平台介入。</li>
+        <li>平台可依据订单信息、聊天记录、物流信息、图片视频、质检报告等证据进行协调处理。</li>
+        <li>平台处理结果不影响任一方依法向人民法院起诉或向监管部门投诉的权利。</li>
+      </ul>
+    </div>
+
+    <h2>九、用户承诺与违规处理</h2>
+    <div class="clause">
+      <ul>
+        <li>买方和卖方应保证交易信息真实，不得刷单、骗补、恶意拒收、虚假售后、伪造凭证。</li>
+        <li>出现违法违规或严重违约行为时，平台可采取限制交易、下架商品、冻结账号、延迟结算等措施，并依法配合监管或司法机关。</li>
+      </ul>
+    </div>
+
+    <h2>十、法律适用与管辖</h2>
+    <div class="clause">
+      <p>
+        本协议适用中华人民共和国法律。因本协议产生争议，双方应先协商；协商不成的，可向平台运营主体所在地有管辖权的人民法院提起诉讼。若法律对消费者管辖有强制规定，从其规定。
+      </p>
+    </div>
+
+    <h2>十一、其他</h2>
+    <div class="clause">
+      <p>
+        本协议部分条款无效或不可执行，不影响其他条款效力。本协议自用户完成支付或勾选同意之日起生效，至相关订单义务履行完毕时终止。
+      </p>
+    </div>
+
+    <div class="highlight-box">
+      <p style="margin: 0; color: var(--text-primary);">
+        <strong>提示：</strong>请在支付前确认商品类型（自营或商家）、价格、运费、发货时效、退换规则和售后服务条款。
+      </p>
+    </div>
+
+    <div class="signature-section">
+      <p class="clause-num">签署确认</p>
+      <p>本协议以电子方式签署。通过平台完成支付或勾选同意即视为各方已签署。</p>
+      <div class="signature-row">
+        <div class="signature-item">
+          <div class="signature-label">平台运营主体</div>
+          <div class="signature-value">蝶析信息技术（苏州）有限公司</div>
+        </div>
+        <div class="signature-item">
+          <div class="signature-label">买方</div>
+          <div class="signature-value">[用户实名/账号]</div>
+        </div>
+        <div class="signature-item">
+          <div class="signature-label">订单号</div>
+          <div class="signature-value">[订单号]</div>
+        </div>
+      </div>
+    </div>
+    <div class="background" />
+  </body>
+</html>

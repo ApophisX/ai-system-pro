@@ -1,0 +1,24 @@
+.animate-slide-up {
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform: translateY(100%);
+  animation-delay: 0.5s;
+}
+
+@keyframes slideUp {
+  to {
+    transform: translateY(0);
+  }
+}
+
+// 选中状态的边框动画
+.border-selected {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 2px solid #0d9488; // Teal-600
+    border-radius: 0.75rem; /* rounded-xl */
+    pointer-events: none;
+  }
+}

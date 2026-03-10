@@ -23,43 +23,43 @@
 
 ```typescript
 // ❌ Controller 直接操作数据库
-@Controller('votes')
-export class VoteController {
-  constructor(private voteRepo: VoteRepository) {}
+@Controller('items')
+export class ItemController {
+  constructor(private itemRepo: ItemRepository) {}
 
   @Post()
-  async create(@Body() dto: CreateVoteDto) {
-    return this.voteRepo.save(dto);  // ❌ 错误：应该调用 Service
+  async create(@Body() dto: CreateItemDto) {
+    return this.itemRepo.save(dto);  // ❌ 错误：应该调用 Service
   }
 }
 
 // ❌ Controller 包含业务逻辑
 @Post()
-async create(@Body() dto: CreateVoteDto) {
-  if (dto.optionId === '') {  // ❌ 业务逻辑应该在 Service
-    throw new BadRequestException('选项不能为空');
+async create(@Body() dto: CreateItemDto) {
+  if (dto.relatedId === '') {  // ❌ 业务逻辑应该在 Service
+    throw new BadRequestException('必填项不能为空');
   }
-  return this.voteService.save(...);
+  return this.itemService.save(...);
 }
 
 // ❌ Service 直接写 SQL（应该用 Repository）
 @Injectable()
-export class VoteService {
+export class ItemService {
   async create(dto) {
     return this.dataSource.query(  // ❌ 应该用 Repository
-      'INSERT INTO votes (...) VALUES (...)'
+      'INSERT INTO items (...) VALUES (...)'
     );
   }
 }
 
 // ❌ Repository 包含业务逻辑
 @Injectable()
-export class VoteRepository {
-  async save(vote) {
-    if (vote.expiresAt < new Date()) {  // ❌ 业务逻辑不应该在 Repository
-      throw new Error('投票已过期');
+export class ItemRepository {
+  async save(item) {
+    if (item.expiresAt < new Date()) {  // ❌ 业务逻辑不应该在 Repository
+      throw new Error('记录已过期');
     }
-    return this.repo.save(vote);
+    return this.repo.save(item);
   }
 }
 ```
@@ -68,35 +68,35 @@ export class VoteRepository {
 
 ```typescript
 // ✅ Controller 只调用 Service
-@Controller("votes")
-export class VoteController {
-  constructor(private voteService: VoteService) {}
+@Controller("items")
+export class ItemController {
+  constructor(private itemService: ItemService) {}
 
   @Post()
-  async create(@Body() dto: CreateVoteDto) {
-    return this.voteService.create(dto);
+  async create(@Body() dto: CreateItemDto) {
+    return this.itemService.create(dto);
   }
 }
 
 // ✅ Service 包含业务逻辑和 Repository 调用
 @Injectable()
-export class VoteService {
-  async create(dto: CreateVoteDto): Promise<VoteEntity> {
+export class ItemService {
+  async create(dto: CreateItemDto): Promise<ItemEntity> {
     // 业务验证
     if (dto.expiresAt < new Date()) {
-      throw new BadRequestException("投票已过期");
+      throw new BadRequestException("记录已过期");
     }
 
     // 调用 Repository
-    return this.voteRepo.save(newVote);
+    return this.itemRepo.save(newItem);
   }
 }
 
 // ✅ Repository 只负责数据访问
 @Injectable()
-export class VoteRepository {
-  async save(vote: VoteEntity): Promise<VoteEntity> {
-    return this.repo.save(vote);
+export class ItemRepository {
+  async save(item: ItemEntity): Promise<ItemEntity> {
+    return this.repo.save(item);
   }
 }
 ```
@@ -112,28 +112,28 @@ export class VoteRepository {
 
 ```typescript
 // ❌ 错误：跨模块直接访问 Repository
-export class VoteService {
+export class ItemService {
   constructor(
-    private ownerRepo: OwnerRepository, // ❌ 不能跨模块访问 Repository
+    private userRepo: UserRepository, // ❌ 不能跨模块访问 Repository
   ) {}
 }
 
 // ❌ 错误：模块间循环依赖
-// 投票模块 → 业主模块 → 投票模块
+// 模块A → 模块B → 模块A
 ```
 
 **正确做法**：
 
 ```typescript
 // ✅ 通过 Service 接口通信
-export class VoteService {
+export class ItemService {
   constructor(
-    private ownerService: OwnerService, // ✅ 正确：通过 Service
+    private userService: UserService, // ✅ 正确：通过 Service
   ) {}
 
-  async create(dto, ownerId) {
-    const owner = await this.ownerService.getById(ownerId);
-    if (!owner) throw new NotFoundException("业主不存在");
+  async create(dto, userId) {
+    const user = await this.userService.getById(userId);
+    if (!user) throw new NotFoundException("用户不存在");
     // ...
   }
 }
@@ -154,9 +154,9 @@ export class VoteService {
 
 ```typescript
 // ❌ 禁止使用 console.log
-function create(order) {
-  console.log("Creating order:", order); // ❌
-  return order;
+function create(item) {
+  console.log("Creating item:", item); // ❌
+  return item;
 }
 
 // ❌ 禁止硬编码配置
@@ -166,14 +166,14 @@ const dbUrl = "mysql://localhost:3306/mydb"; // ❌
 const discount = amount * 0.1; // ❌ 什么是 0.1?
 
 // ❌ 禁止使用 any
-const order: any = { ...dto }; // ❌
+const item: any = { ...dto }; // ❌
 ```
 
 **正确示例**：
 
 ```typescript
 // ✅ 使用 Logger
-this.logger.log("Creating order", { orderId: order.id });
+this.logger.log("Creating item", { itemId: item.id });
 
 // ✅ 使用配置（.env）
 const dbUrl = this.configService.get("DATABASE_URL");
@@ -183,7 +183,7 @@ const DEFAULT_DISCOUNT = 0.1;
 const discount = amount * DEFAULT_DISCOUNT;
 
 // ✅ 使用类型
-const order: OrderEntity = { ...dto };
+const item: ItemEntity = { ...dto };
 ```
 
 ### ❌ 错误处理
@@ -196,17 +196,17 @@ const order: OrderEntity = { ...dto };
 
 ```typescript
 // ❌ 不处理异常
-const order = await this.orderService.create(dto); // 没有 try-catch
+const item = await this.itemService.create(dto); // 没有 try-catch
 
 // ❌ 空的 catch 块
 try {
-  await this.orderService.create(dto);
+  await this.itemService.create(dto);
 } catch (error) {
   // ❌ 什么都不做
 }
 
 // ❌ 忽视 Promise reject
-this.orderService.create(dto); // 没有 await
+this.itemService.create(dto); // 没有 await
 ```
 
 **正确示例**：
@@ -214,19 +214,19 @@ this.orderService.create(dto); // 没有 await
 ```typescript
 // ✅ 正确处理异常
 try {
-  const order = await this.orderService.create(dto);
-  return order;
+  const item = await this.itemService.create(dto);
+  return item;
 } catch (error) {
-  this.logger.error("Failed to create order", error);
+  this.logger.error("Failed to create item", error);
   throw error;
 }
 
 // ✅ 记录日志
 try {
-  await this.orderService.create(dto);
+  await this.itemService.create(dto);
 } catch (error) {
-  this.logger.error("Order creation failed", error);
-  throw new InternalServerErrorException("订单创建失败");
+  this.logger.error("Item creation failed", error);
+  throw new InternalServerErrorException("记录创建失败");
 }
 ```
 
@@ -241,23 +241,23 @@ try {
 ```typescript
 // ❌ 写操作不在事务内
 async create(dto) {
-  const vote = await this.voteRepo.save(newVote);  // 没有事务
-  await this.optionRepo.update(optionId, { status: 'active' });  // 可能失败
+  const item = await this.itemRepo.save(newItem);  // 没有事务
+  await this.relatedRepo.update(relatedId, { status: 'active' });  // 可能失败
 }
 
 // ❌ 在循环内做查询（N+1 问题）
-async getVotesWithOwners() {
-  const votes = await this.voteRepo.find();
-  for (const vote of votes) {
-    vote.owner = await this.ownerRepo.findById(vote.ownerId);  // ❌ N+1
+async getItemsWithUsers() {
+  const items = await this.itemRepo.find();
+  for (const item of items) {
+    item.user = await this.userRepo.findById(item.userId);  // ❌ N+1
   }
-  return votes;
+  return items;
 }
 
 // ❌ 在循环内做保存
-async updateVotes(voteIds) {
-  for (const id of voteIds) {
-    await this.voteRepo.update(id, { status: 'closed' });  // ❌ 多次数据库操作
+async updateItems(itemIds) {
+  for (const id of itemIds) {
+    await this.itemRepo.update(id, { status: 'closed' });  // ❌ 多次数据库操作
   }
 }
 ```
@@ -268,23 +268,23 @@ async updateVotes(voteIds) {
 // ✅ 使用事务
 async create(dto) {
   return this.dataSource.transaction(async (manager) => {
-    const vote = await manager.save(VoteEntity, newVote);
-    await manager.update(OptionEntity, optionId, { status: 'active' });
-    return vote;
+    const item = await manager.save(ItemEntity, newItem);
+    await manager.update(RelatedEntity, relatedId, { status: 'active' });
+    return item;
   });
 }
 
 // ✅ 使用关系或 JOIN（避免 N+1）
-async getVotesWithOwners() {
-  return this.voteRepo.find({
-    relations: ['owner'],  // ✅ 一次查询获取关系数据
+async getItemsWithUsers() {
+  return this.itemRepo.find({
+    relations: ['user'],  // ✅ 一次查询获取关系数据
   });
 }
 
 // ✅ 使用批量操作
-async updateVotes(voteIds) {
-  await this.voteRepo.update(
-    { id: In(voteIds) },
+async updateItems(itemIds) {
+  await this.itemRepo.update(
+    { id: In(itemIds) },
     { status: 'closed' },
   );
 }
@@ -300,21 +300,21 @@ async updateVotes(voteIds) {
 
 ```typescript
 // ❌ 查询所有数据
-async getAllVotes() {
-  return this.voteRepo.find();  // 可能数百万条记录
+async getAllItems() {
+  return this.itemRepo.find();  // 可能数百万条记录
 }
 
 // ❌ 加载不必要的关系
-async getVote(id) {
-  return this.voteRepo.findOne({
+async getItem(id) {
+  return this.itemRepo.findOne({
     where: { id },
-    relations: ['owner', 'options', 'assembly', 'attachments'],  // 太多
+    relations: ['user', 'childs', 'parent', 'attachments'],  // 太多
   });
 }
 
 // ❌ 查询所有字段
 async search(keyword) {
-  return this.voteRepo.find({
+  return this.itemRepo.find({
     where: { title: Like(`%${keyword}%`) },  // 没有分页
   });
 }
@@ -324,8 +324,8 @@ async search(keyword) {
 
 ```typescript
 // ✅ 分页查询
-async getVotes(page = 1, limit = 20) {
-  return this.voteRepo.find({
+async getItems(page = 1, limit = 20) {
+  return this.itemRepo.find({
     skip: (page - 1) * limit,
     take: limit,
     order: { createdAt: 'DESC' },
@@ -333,16 +333,16 @@ async getVotes(page = 1, limit = 20) {
 }
 
 // ✅ 只加载必要的关系
-async getVote(id) {
-  return this.voteRepo.findOne({
+async getItem(id) {
+  return this.itemRepo.findOne({
     where: { id },
-    relations: ['owner', 'assembly'],  // 只加载必要的关系
+    relations: ['user', 'parent'],  // 只加载必要的关系
   });
 }
 
 // ✅ 分页和 select
 async search(keyword, page = 1, limit = 20) {
-  return this.voteRepo.find({
+  return this.itemRepo.find({
     select: ['id', 'title', 'status'],  // 只查询必要字段
     where: { title: Like(`%${keyword}%`) },
     skip: (page - 1) * limit,
@@ -400,24 +400,24 @@ return safeUser;
 
 ```typescript
 // ✅ Controller 层使用 Guard
-@Controller("votes")
-export class VoteController {
+@Controller("items")
+export class ItemController {
   @Get(":id")
   @UseGuards(JwtAuthGuard) // 权限检查
   async getById(@Param("id") id: string, @User() user: User) {
-    return this.voteService.getById(id, user.id);
+    return this.itemService.getById(id, user.id);
   }
 }
 
 // ✅ Service 层验证权限
 @Injectable()
-export class VoteService {
-  async getById(id: string, ownerId: string) {
-    const vote = await this.voteRepo.findById(id);
-    if (!vote || vote.ownerId !== ownerId) {
-      throw new ForbiddenException("无权访问此投票");
+export class ItemService {
+  async getById(id: string, userId: string) {
+    const item = await this.itemRepo.findById(id);
+    if (!item || item.userId !== userId) {
+      throw new ForbiddenException("无权访问此记录");
     }
-    return vote;
+    return item;
   }
 }
 ```
@@ -430,9 +430,9 @@ export class VoteService {
 // ✅ 使用 Logger
 constructor(private logger: Logger) {}
 
-async create(order) {
-  this.logger.log('Creating order', { orderId: order.id });
-  return order;
+async create(item) {
+  this.logger.log('Creating item', { itemId: item.id });
+  return item;
 }
 
 // ✅ 配置来自环境变量
@@ -456,12 +456,12 @@ if (price > PREMIUM_PRICE_THRESHOLD) {
 
 ```typescript
 // ✅ Service 层单元测试
-describe("VoteService", () => {
-  it("should create vote", async () => {
+describe("ItemService", () => {
+  it("should create item", async () => {
     // 测试逻辑
   });
 
-  it("should throw error when vote expired", async () => {
+  it("should throw error when item expired", async () => {
     // 测试逻辑
   });
 });
@@ -487,10 +487,10 @@ this.logger.info(`User login`, {
 const JWT_SECRET = "my-super-secret-key-12345";
 
 // ❌ 禁止：权限检查在 Service
-export class VoteService {
-  async approve(voteId: string, ownerId: string) {
-    const owner = await this.ownerRepo.getById(ownerId);
-    if (owner.role !== "COMMITTEE_CHAIR") {
+export class ItemService {
+  async approve(itemId: string, userId: string) {
+    const user = await this.userRepo.getById(userId);
+    if (user.role !== "ADMIN") {
       // ❌ 错误
       throw new ForbiddenException();
     }
@@ -509,11 +509,11 @@ this.logger.info(`User login`, { userId: user.id });
 const JWT_SECRET = this.configService.get('JWT_SECRET');
 
 // ✅ 权限检查在 Controller/Guard
-@Post('votes/:id/approve')
+@Post('items/:id/approve')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('COMMITTEE_CHAIR')
-async approve(@Param('id') voteId: string) {
-  return this.voteService.approveVote(voteId);
+@Roles('ADMIN')
+async approve(@Param('id') itemId: string) {
+  return this.itemService.approveItem(itemId);
 }
 ```
 
@@ -521,10 +521,10 @@ async approve(@Param('id') voteId: string) {
 
 ### ❌ 业务逻辑
 
-- **禁止**：在代码中假设业务规则，必须查阅 `docs/product/` 中的 PRD 及业务需求文档
+- **禁止**：在代码中假设业务规则，必须查阅 `share-doc/prd/` 中的 PRD 及业务需求文档
 - **禁止**：创建未在业务文档中定义的业务角色
-- **禁止**：假设存在自动审批、保险理赔等未确定的功能
-- **禁止**：提前实现金融/Web3 相关逻辑（仅做类型预留）
+- **禁止**：假设存在未在 PRD 中定义的业务功能
+- **禁止**：提前实现未确定的高级逻辑（仅做类型预留）
 
 ### ❌ 设计决策
 

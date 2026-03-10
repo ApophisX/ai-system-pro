@@ -1,0 +1,42 @@
+{
+  "name": "ai-system-pro",
+  "version": "1.0.0",
+  "description": "统一 monorepo 仓库，采用多 Agent 协作开发模式，覆盖从产品需求到 API、Web、小程序、移动端的全链路开发。",
+  "private": true,
+  "scripts": {
+    "dev:api": "pnpm run dev -C system/ai-system-api",
+    "dev:web": "pnpm run dev -C system/ai-system-web",
+    "dev:miniapp": "pnpm run dev:weapp -C system/ai-system-miniapp",
+    "build:api": "pnpm run build -C system/ai-system-api",
+    "build:web": "pnpm run build -C system/ai-system-web",
+    "build:miniapp": "pnpm run build:weapp -C system/ai-system-miniapp",
+    "build:all": "pnpm run build:api && pnpm run build:web && pnpm run build:miniapp",
+    "lint:api": "pnpm run lint -C system/ai-system-api",
+    "lint:web": "pnpm run lint -C system/ai-system-web",
+    "lint:all": "pnpm run lint:api && pnpm run lint:web",
+    "test": "pnpm run test -C system/ai-system-api",
+    "test:api": "pnpm run test -C system/ai-system-api",
+    "install:all": "pnpm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ApophisX/ai-system-pro.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ApophisX/ai-system-pro/issues"
+  },
+  "homepage": "https://github.com/ApophisX/ai-system-pro#readme",
+  "keywords": [
+    "monorepo",
+    "nestjs",
+    "react",
+    "taro",
+    "ai-system"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "packageManager": "pnpm@10.12.4"
+}

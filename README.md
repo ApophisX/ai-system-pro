@@ -9,8 +9,8 @@ ai-system-pro
 │
 ├── system/                    # 应用层
 │   ├── ai-system-api/         # NestJS 后端 API
-│   ├── ai-system-web/         # React + MUI Web（规划中）
-│   ├── ai-system-miniapp/     # Taro 小程序（规划中）
+│   ├── ai-system-web/         # React + MUI Web（Vite + Minimals）
+│   ├── ai-system-miniapp/     # Taro 小程序
 │   └── ai-system-app/         # Flutter 移动端（规划中）
 │
 ├── share-doc/                 # 共享文档
@@ -32,14 +32,32 @@ ai-system-pro
 
 ## 技术栈
 
-| 端     | 技术栈                   | 目录                        |
-| ------ | ------------------------ | --------------------------- |
-| API    | NestJS + TypeORM + MySQL | `system/ai-system-api/`     |
-| Web    | React + MUI              | `system/ai-system-web/`     |
-| 小程序 | Taro                     | `system/ai-system-miniapp/` |
-| 移动端 | Flutter                  | `system/ai-system-app/`     |
+| 端     | 技术栈                           | 目录                        |
+| ------ | -------------------------------- | --------------------------- |
+| API    | NestJS + TypeORM + MySQL         | `system/ai-system-api/`     |
+| Web    | React 19 + Vite + MUI + Minimals | `system/ai-system-web/`     |
+| 小程序 | Taro                             | `system/ai-system-miniapp/` |
+| 移动端 | Flutter                          | `system/ai-system-app/`     |
 
 ## 快速开始
+
+### 根目录（推荐）
+
+在仓库根目录执行，可快速启动各应用：
+
+```bash
+# 安装所有依赖
+pnpm install
+
+# 启动后端 API
+pnpm dev:api
+
+# 启动 Web 前端（另开终端）
+pnpm dev:web
+
+# 启动小程序（另开终端）
+pnpm dev:miniapp
+```
 
 ### 后端 API
 
@@ -58,10 +76,43 @@ pnpm dev
 
 API 开发规范见 `system/ai-system-api/docs/README.md`。
 
+### Web 前端 (React + MUI)
+
+```bash
+cd system/ai-system-web
+
+# 安装依赖
+pnpm install
+
+# 开发模式
+pnpm dev
+
+# 构建
+pnpm build
+```
+
+Web 前端基于 **Vite + React 19 + MUI + Minimals** 模板，支持深色/浅色模式、移动端适配。开发规范见 `system/ai-system-web/docs/README.md`，完整规范见 `system/ai-system-web/skills/SKILL.md`。
+
+### 小程序 (Taro)
+
+```bash
+cd system/ai-system-miniapp
+
+# 安装依赖
+pnpm install
+
+# 微信小程序开发模式
+pnpm dev:weapp
+
+# 其他平台：dev:alipay / dev:h5 / dev:tt 等
+```
+
+小程序开发规范见 [agents/miniapp-agent.md](agents/miniapp-agent.md)。
+
 ### 环境要求
 
-- **Node.js** 18+
-- **pnpm** 8+
+- **Node.js** 22+（Web 前端要求 22.12+）
+- **pnpm** 10+
 - **MySQL** 8.0+
 - **Redis** 6+
 
@@ -91,3 +142,5 @@ QA Agent → 测试
 
 - [AGENTS.md](AGENTS.md) - Agent 列表、工作流、依赖关系
 - [system/ai-system-api/docs/](system/ai-system-api/docs/) - 后端架构、编码规范、数据库设计
+- [system/ai-system-web/docs/](system/ai-system-web/docs/) - 前端开发规范、目录结构、与 Cursor 规则
+- [system/ai-system-web/skills/SKILL.md](system/ai-system-web/skills/SKILL.md) - 前端完整开发规范（组件、页面、API 调用等）

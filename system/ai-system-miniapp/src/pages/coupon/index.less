@@ -1,0 +1,43 @@
+.coupon-card {
+  position: relative;
+  // 票据缺口 - 左侧
+  &::before {
+    content: "";
+    position: absolute;
+    left: -10rpx;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20rpx;
+    height: 20rpx;
+    background: #f9fafb; // bg-gray-50
+    border-radius: 50%;
+    z-index: 10;
+  }
+  // 票据缺口 - 右侧
+  &::after {
+    content: "";
+    position: absolute;
+    right: -10rpx;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20rpx;
+    height: 20rpx;
+    background: #f9fafb; // bg-gray-50
+    border-radius: 50%;
+    z-index: 10;
+  }
+}
+
+// 骨架屏闪烁动画
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+.animate-pulse-custom {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

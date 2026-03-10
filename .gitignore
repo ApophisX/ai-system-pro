@@ -104,10 +104,13 @@ venv/
 .eggs/
 
 # ================================
-# 小程序 / Uni-app
+# 小程序 / Taro / Uni-app
 # ================================
 unpackage/
 miniprogram_npm/
+deploy_versions/
+.rn_temp/
+.swc/
 
 # ================================
 # 其他

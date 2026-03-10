@@ -101,10 +101,10 @@ const data: UserData = await fetch(...);
 ```typescript
 // ❌ 禁止：Service 直接使用 TypeORM
 @Injectable()
-export class VoteService {
+export class ItemService {
   constructor(
-    @InjectRepository(VoteEntity)
-    private repo: Repository<VoteEntity>,
+    @InjectRepository(ItemEntity)
+    private repo: Repository<ItemEntity>,
   ) {}
 
   async create(dto) {
@@ -114,11 +114,11 @@ export class VoteService {
 
 // ✅ 正确：通过 Repository
 @Injectable()
-export class VoteService {
-  constructor(private voteRepo: VoteRepository) {}
+export class ItemService {
+  constructor(private itemRepo: ItemRepository) {}
 
   async create(dto) {
-    return this.voteRepo.save(newVote); // ✅
+    return this.itemRepo.save(newItem); // ✅
   }
 }
 ```
@@ -127,11 +127,11 @@ export class VoteService {
 
 ```typescript
 // ✅ 使用 DataSource 管理事务
-async create(dto: CreateVoteDto): Promise<VoteEntity> {
+async create(dto: CreateItemDto): Promise<ItemEntity> {
   return this.dataSource.transaction(async (manager) => {
-    const vote = await manager.save(VoteEntity, voteData);
-    await manager.update(AssemblyEntity, assemblyId, { status: 'voting' });
-    return vote;
+    const item = await manager.save(ItemEntity, itemData);
+    await manager.update(ParentEntity, parentId, { status: 'active' });
+    return item;
   });
 }
 ```
@@ -158,26 +158,23 @@ async create(dto: CreateVoteDto): Promise<VoteEntity> {
 
 **使用场景**（可选）：
 
-| 场景         | 键格式                       | 过期时间 |
-| ------------ | ---------------------------- | -------- |
-| 业主信息缓存 | `owner:{ownerId}`            | 1 小时   |
-| 投票列表缓存 | `votes:{assemblyId}`         | 5 分钟   |
-| 投票创建锁   | `vote:creating:{assemblyId}` | 10 秒    |
-| 缴费幂等键   | `payment:idempotent:{key}`   | 24 小时  |
+| 场景       | 键格式               | 过期时间 |
+| ---------- | -------------------- | -------- |
+| 用户信息   | `user:{userId}`      | 1 小时   |
+| 列表缓存   | `items:{categoryId}` | 5 分钟   |
+| 创建锁     | `item:creating:{id}` | 10 秒    |
+| 幂等键     | `idempotent:{key}`   | 24 小时  |
 
 **示例**（可选）：
 
 ```typescript
 // ✅ 缓存读取不到则查询数据库
 async getUser(userId: string): Promise<UserEntity> {
-  // 尝试从缓存读取
   const cached = await this.cacheService.get(`user:${userId}`);
   if (cached) return cached;
 
-  // 从数据库读取
   const user = await this.userRepo.findById(userId);
   if (user) {
-    // 保存到缓存
     await this.cacheService.set(`user:${userId}`, user, 3600);
   }
   return user;
@@ -221,16 +218,16 @@ src/modules/[module-name]/
 
 ```typescript
 // ❌ 禁止：直接访问其他模块的 Repository
-export class VoteService {
-  constructor(private ownerRepo: OwnerRepository) {} // ❌
+export class ItemService {
+  constructor(private userRepo: UserRepository) {} // ❌
 }
 
 // ✅ 正确：通过 Service 通信
-export class VoteService {
-  constructor(private ownerService: OwnerService) {} // ✅
+export class ItemService {
+  constructor(private userService: UserService) {} // ✅
 
-  async create(dto, ownerId) {
-    const owner = await this.ownerService.getById(ownerId);
+  async create(dto, userId) {
+    const user = await this.userService.getById(userId);
     // ...
   }
 }
@@ -255,13 +252,6 @@ export class VoteService {
 1. 理解需求 → 2. 快速实现 → 3. 代码清晰 → 4. 测试覆盖 → 5. 优化性能
 ```
 
-**示例**：
-
-```typescript
-// ❌ 过度设计：过早优化，代码复杂
-// ✅ 适度设计：代码清晰，功能完整
-```
-
 ---
 
 ## ADR-007: 事务管理
@@ -279,16 +269,16 @@ export class VoteService {
 ```typescript
 // ❌ 禁止：写操作不在事务内
 async create(dto) {
-  const vote = await this.voteRepo.save(newVote);
-  await this.assemblyRepo.update(assemblyId, { status: 'voting' });  // 可能失败
+  const item = await this.itemRepo.save(newItem);
+  await this.parentRepo.update(parentId, { status: 'active' });  // 可能失败
 }
 
 // ✅ 正确：使用事务
-async create(dto): Promise<VoteEntity> {
+async create(dto): Promise<ItemEntity> {
   return this.dataSource.transaction(async (manager) => {
-    const vote = await manager.save(VoteEntity, voteData);
-    await manager.update(AssemblyEntity, assemblyId, { status: 'voting' });
-    return vote;
+    const item = await manager.save(ItemEntity, itemData);
+    await manager.update(ParentEntity, parentId, { status: 'active' });
+    return item;
   });
 }
 ```
@@ -318,16 +308,16 @@ async create(dto): Promise<VoteEntity> {
 
 ```typescript
 // ❌ 禁止
-console.log("Vote created");
+console.log("Item created");
 
 // ✅ 正确
-this.logger.log("Vote created", { voteId: vote.id });
-this.logger.error("Failed to create vote", error);
+this.logger.log("Item created", { itemId: item.id });
+this.logger.error("Failed to create item", error);
 ```
 
 ---
 
-## ADR-007: 分层日志与链路追踪
+## ADR-009: 分层日志与链路追踪（可选）
 
 **决策**：实现结构化日志和分布式链路追踪
 
@@ -340,36 +330,35 @@ this.logger.error("Failed to create vote", error);
 **决策**：
 
 - ✅ 使用 Winston 作为日志框架
-- ✅ 使用 OpenTelemetry 进行链路追踪
+- ✅ 使用 OpenTelemetry 进行链路追踪（可选）
 - ✅ 所有日志都带 traceId 和 spanId
-- ✅ 使用 Prometheus 收集指标
-- ✅ 使用 Grafana 可视化监控
+- ✅ 使用 Prometheus 收集指标（可选）
+- ✅ 使用 Grafana 可视化监控（可选）
 
 **日志级别**：
-| 级别 | 用途 | 示例 |
-|------|------|------|
-| error | 系统异常 | 数据库连接失败、未捕获异常 |
-| warn | 业务异常 | 投票被拒绝、缴费失败 |
-| info | 关键流程 | 投票创建、缴费完成 |
-| debug | 调试信息 | 参数值、中间结果 |
+
+| 级别  | 用途     | 示例               |
+| ----- | -------- | ------------------ |
+| error | 系统异常 | 数据库连接失败     |
+| warn  | 业务异常 | 操作被拒绝         |
+| info  | 关键流程 | 创建完成、流程结束 |
+| debug | 调试信息 | 参数值、中间结果   |
 
 **约束**：
 
 ```typescript
 // ✅ 结构化日志
-this.logger.info('Vote created', {
+this.logger.info('Item created', {
   traceId: context.traceId,
-  voteId: vote.id,
-  assemblyId: vote.assemblyId,
-  ownerId: vote.ownerId,
+  itemId: item.id,
+  userId: item.userId,
   timestamp: new Date().toISOString(),
 });
 
 // ✅ 错误日志包含堆栈
 catch (error) {
-  this.logger.error('Failed to process vote', {
+  this.logger.error('Failed to process', {
     traceId: context.traceId,
-    voteId,
     error: error.message,
     stack: error.stack,
   });
@@ -378,7 +367,7 @@ catch (error) {
 
 ---
 
-## ADR-008: MVP 范围限制
+## ADR-010: MVP 范围限制
 
 **决策**：阶段一（MVP）仅实现核心业务，不提前设计复杂功能
 
@@ -388,39 +377,28 @@ catch (error) {
 - 过度设计会增加复杂度和上市时间
 - 微服务和高级功能可在后续阶段实现
 
-**当前阶段限制**（参考 `docs/product/` 中的 PRD 实施路线图）：
-| 功能 | MVP | 状态 |
-|------|-----|------|
-| 业主实名注册 | ✅ | 实现 |
-| 公告发布系统 | ✅ | 实现 |
-| 在线缴费 | ✅ | 实现 |
-| 基础报修 | ✅ | 实现 |
-| 财务公示看板 | ✅ | 实现 |
-| 电子投票系统 | ❌ | 留作二期 |
-| 业委会选举 | ❌ | 留作二期 |
-| AI 社区助手 | ❌ | 留作三期 |
-
 **设计约束**：
 
 ```typescript
 // ✅ 为扩展预留接口（不实现）
-interface AssemblyConfig {
-  blockchainProof?: boolean; // 可选，当前不实现
+interface Config {
+  advancedFeature?: boolean; // 可选，当前不实现
 }
 
 // ❌ 禁止：提前实现未确定的功能
-// 不要在 MVP 阶段实现保险、理赔、区块链等
+// 不要在 MVP 阶段实现未在 PRD 中定义的功能
 
 // ✅ 为扩展预留类型（有注释说明）
-enum OwnerRole {
-  OWNER = "owner",
-  // COMMITTEE_CHAIR = 'committee_chair', // 留作二期实现
+enum UserRole {
+  USER = "user",
+  ADMIN = "admin",
+  // EXTENDED_ROLE = 'extended', // 留作后续实现
 }
 ```
 
 ---
 
-## ADR-009: 代码审查与质量门禁
+## ADR-011: 代码审查与质量门禁
 
 **决策**：建立严格的代码审查和质量检查机制
 
@@ -433,7 +411,7 @@ enum OwnerRole {
 **决策**：
 
 - ✅ 所有代码必须通过 Code Review
-- ✅ 必须有 100% Domain 层单元测试覆盖
+- ✅ 必须有 Domain 层单元测试覆盖
 - ✅ 必须通过 ESLint 和 Prettier 检查
 - ✅ 架构问题优先级最高，可要求重构
 - ❌ 红线问题（见 [prohibitions.md](./prohibitions.md)）不得合并
@@ -453,11 +431,9 @@ enum OwnerRole {
 
 如需修改这些已做决策：
 
-1. **创建 ADR 文档** - 在 `docs/backend/adr.md` 中追加或新建独立 ADR 文件
+1. **创建 ADR 文档** - 在本文件中追加或新建独立 ADR 文件
 2. **团队讨论** - 至少两名架构师同意
 3. **影响评估** - 评估对现有系统的影响
 4. **实施计划** - 定义迁移策略和时间表
 5. **文档更新** - 更新相关规范文档
 6. **团队通知** - 通知所有开发人员
-
-**当前没有待审批的决策变更。**

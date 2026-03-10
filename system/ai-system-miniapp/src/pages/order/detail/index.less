@@ -1,0 +1,47 @@
+// orderDetail.less
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 倒计时数字的跳动效果
+.number-tick {
+  font-variant-numeric: tabular-nums; // 等宽数字，防止倒计时抖动
+}
+
+// 顶部背景波浪装饰
+.header-wave {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: #f9fafb; // gray-50
+  border-radius: 20px 20px 0 0;
+}
+
+// 时间轴连接线
+.timeline-line {
+  position: absolute;
+  left: 7px; // 根据圆点大小调整
+  top: 24px;
+  bottom: -16px;
+  width: 1px;
+  background-color: #e5e7eb; // gray-200
+  z-index: 0;
+}
+// 最后一个不需要连接线
+.timeline-item:last-child .timeline-line {
+  display: none;
+}

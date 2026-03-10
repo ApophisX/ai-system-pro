@@ -1,0 +1,17 @@
+// styles/index.less
+
+// 针对iPhone X等全面屏底部的安全距离
+.pb-safe-area {
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+// 特殊的投影，让按钮看起来更立体，有“按下去”的欲望
+.shadow-orange {
+  box-shadow: 0 4px 14px 0 rgba(249, 115, 22, 0.39);
+}
+
+// 字体优化：数字使用等宽字体，防止跳动
+.font-mono {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}

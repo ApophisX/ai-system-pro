@@ -32,11 +32,10 @@ architecture.md (架构原则)
 
 ## 与 Cursor 规则的关系
 
-- **`.cursor/rules/backend.mdc`**：精简规则，编辑 `apps/api` 时 AI 自动应用
-- **`docs/backend/*.md`**：详细规范，Agent 开发时按需查阅
+- **`.cursor/rules/backend.mdc`**：精简规则，编辑 `system/ai-system-api` 时 AI 自动应用
+- **`docs/*.md`**：详细规范，Agent 开发时按需查阅
 
 ## 相关资源
 
-- `docs/api-spec/` - OpenAPI 契约，与 Swagger 同步
-- `docs/database/` - 数据库设计
-- `packages/types` - 共享 DTO 类型
+- `share-doc/api-spec/` - OpenAPI 契约，与 Swagger 同步
+- `docs/database.md` - 数据库设计

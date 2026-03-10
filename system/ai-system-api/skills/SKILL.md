@@ -136,8 +136,6 @@ export class VoteRepository {
 - **Output**：响应格式，优先用 `OmitType(Entity, [...])` 继承
 - **Update**：更新请求，字段用 `@IsOptional()`
 
-优先使用 `@ai-system/types` 中的 DTO，不重复定义。新增类型需同步到 packages/types。
-
 ## 7. 异常与日志
 
 - 使用 NestJS 内置异常：`NotFoundException`、`BadRequestException`、`ForbiddenException` 等

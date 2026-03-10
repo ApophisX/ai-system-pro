@@ -1,0 +1,36 @@
+view,
+scroll-view {
+  box-sizing: border-box;
+}
+// 针对Button的统一样式修复（Taro Button自带边框问题）
+button::after {
+  border: none;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+.delay-200 {
+  animation-delay: 0.2s;
+}
+.delay-300 {
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 隐藏滚动条让横向滚动更美观
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

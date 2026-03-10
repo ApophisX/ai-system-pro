@@ -44,24 +44,24 @@
 全部要加上swagger注解
 
 ```typescript
-@Controller('votes')
-export class VoteController {
-  constructor(private voteService: VoteService) {}
+@Controller('items')
+export class ItemController {
+  constructor(private itemService: ItemService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Body() dto: CreateVoteDto, @User() user: User) {
-    return this.voteService.create(dto, user.id);
+  async create(@Body() dto: CreateItemDto, @User() user: User) {
+    return this.itemService.create(dto, user.id);
   }
 
   @Get(':id')
   async getById(@Param('id') id: string) {
-    return this.voteService.getById(id);
+    return this.itemService.getById(id);
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateVoteDto) {
-    return this.voteService.update(id, dto);
+  async update(@Param('id') id: string, @Body() dto: UpdateItemDto) {
+    return this.itemService.update(id, dto);
   }
 }
 ```
@@ -87,38 +87,38 @@ export class VoteController {
 
 ```typescript
 @Injectable()
-export class VoteService {
+export class ItemService {
   constructor(
-    private voteRepo: VoteRepository,
-    private assemblyRepo: AssemblyRepository,
+    private itemRepo: ItemRepository,
+    private parentRepo: ParentRepository,
     private dataSource: DataSource,
-    private logger: Logger = new Logger(VoteService.name),
+    private logger: Logger = new Logger(ItemService.name),
   ) {}
 
-  async create(dto: CreateVoteDto, ownerId: string): Promise<VoteEntity> {
+  async create(dto: CreateItemDto, userId: string): Promise<ItemEntity> {
     // 1. 业务验证
-    const assembly = await this.assemblyRepo.findById(dto.assemblyId);
-    if (!assembly) {
-      throw new NotFoundException('业主大会不存在');
+    const parent = await this.parentRepo.findById(dto.parentId);
+    if (!parent) {
+      throw new NotFoundException('父记录不存在');
     }
 
-    // 2. 在事务内创建投票
-    const vote = await this.dataSource.transaction(async manager => {
-      const newVote = new VoteEntity();
-      newVote.assemblyId = dto.assemblyId;
-      newVote.ownerId = ownerId;
-      newVote.title = dto.title;
-      newVote.status = 'active';
+    // 2. 在事务内创建
+    const item = await this.dataSource.transaction(async manager => {
+      const newItem = new ItemEntity();
+      newItem.parentId = dto.parentId;
+      newItem.userId = userId;
+      newItem.title = dto.title;
+      newItem.status = 'active';
 
-      return manager.save(newVote);
+      return manager.save(newItem);
     });
 
-    this.logger.log(`Vote created: ${vote.id}`);
-    return vote;
+    this.logger.log(`Item created: ${item.id}`);
+    return item;
   }
 
-  async getById(id: string): Promise<VoteEntity | null> {
-    return this.voteRepo.findById(id);
+  async getById(id: string): Promise<ItemEntity | null> {
+    return this.itemRepo.findById(id);
   }
 }
 ```
@@ -143,32 +143,32 @@ export class VoteService {
 
 ```typescript
 @Injectable()
-export class VoteRepository {
+export class ItemRepository {
   constructor(
-    @InjectRepository(VoteEntity)
-    private repo: Repository<VoteEntity>,
+    @InjectRepository(ItemEntity)
+    private repo: Repository<ItemEntity>,
   ) {}
 
-  async save(vote: VoteEntity): Promise<VoteEntity> {
-    return this.repo.save(vote);
+  async save(item: ItemEntity): Promise<ItemEntity> {
+    return this.repo.save(item);
   }
 
-  async findById(id: string): Promise<VoteEntity | null> {
+  async findById(id: string): Promise<ItemEntity | null> {
     return this.repo.findOne({
       where: { id },
-      relations: ['assembly'],
+      relations: ['parent'],
     });
   }
 
-  async findByOwnerId(ownerId: string): Promise<VoteEntity[]> {
+  async findByUserId(userId: string): Promise<ItemEntity[]> {
     return this.repo.find({
-      where: { ownerId },
+      where: { userId },
       order: { createdAt: 'DESC' },
-      relations: ['assembly'],
+      relations: ['parent'],
     });
   }
 
-  async update(id: string, data: Partial<VoteEntity>): Promise<void> {
+  async update(id: string, data: Partial<ItemEntity>): Promise<void> {
     await this.repo.update(id, data);
   }
 
@@ -214,8 +214,8 @@ import {
   BaseEntity,
   BaseEntityWithNumericId, //如果实体比较简单，不考虑ID问题可用这个继承
 } from '@/infrastructure/database/entities/base.entity';
-@Entity('votes')
-export class VoteEntity extends BaseEntity {
+@Entity('items')
+export class ItemEntity extends BaseEntity {
   @ApiProperty();
   @PrimaryGeneratedColumn('uuid')
   @Expose();
@@ -224,13 +224,13 @@ export class VoteEntity extends BaseEntity {
   @ApiProperty();
   @Column({ type: 'uuid' })
   @Expose();
-  ownerId: string;
+  userId: string;
 
   @ApiProperty();
   @Column({ type: 'uuid' })
   @Expose();
   @IsNotEmpty();
-  assemblyId: string;
+  parentId: string;
 
   @ApiProperty();
   @Column({ type: 'varchar', length: 200 })
@@ -250,8 +250,8 @@ export class VoteEntity extends BaseEntity {
   remark: string;
 
   // 关系
-  @ManyToOne(() => AssemblyEntity)
-  assembly: AssemblyEntity;
+  @ManyToOne(() => ParentEntity)
+  parent: ParentEntity;
 }
 ```
 
@@ -278,11 +278,11 @@ export class VoteEntity extends BaseEntity {
 ### 创建 DTO（Create）
 
 ```typescript
-// create-vote.dto.ts - 创建投票请求
-export class CreateVoteDto {
+// create-item.dto.ts - 创建请求
+export class CreateItemDto {
   @IsUUID()
   @IsNotEmpty()
-  assemblyId: string;
+  parentId: string;
 
   @IsString()
   @MaxLength(200)
@@ -298,8 +298,8 @@ export class CreateVoteDto {
 ### 查询 DTO（Query）
 
 ```typescript
-// query-vote.dto.ts - 查询/列表请求
-export class QueryVoteDto {
+// query-item.dto.ts - 查询/列表请求
+export class QueryItemDto {
   @IsInt()
   @Min(1)
   @Type(() => Number)
@@ -317,7 +317,7 @@ export class QueryVoteDto {
 
   @IsOptional()
   @IsString()
-  assemblyId?: string;
+  parentId?: string;
 
   @IsOptional()
   @Type(() => Date)
@@ -335,27 +335,27 @@ export class QueryVoteDto {
 - **聚合/统计数据**：无对应实体的 Output（如汇总 DTO）可完全自定义
 
 ```typescript
-// output-vote.dto.ts - 基于实体 OmitType
+// output-item.dto.ts - 基于实体 OmitType
 import { OmitType } from '@nestjs/swagger';
-import { VoteEntity } from '../entities';
+import { ItemEntity } from '../entities';
 
-export class OutputVoteDto extends OmitType(VoteEntity, [
-  'ownerId',
-  'assemblyId',
-  'assembly',
-  'owner',
+export class OutputItemDto extends OmitType(ItemEntity, [
+  'userId',
+  'parentId',
+  'parent',
+  'user',
   'deletedAt',
   'version',
   'updatedBy',
   'updatedAt',
 ] as const) {
-  /** 虚拟字段：脱敏业主昵称 */
+  /** 虚拟字段：脱敏用户昵称 */
   @ApiPropertyOptional()
-  ownerNickname: string;
+  userNickname: string;
 }
 
 /** 聚合数据 DTO（无对应实体，单独定义） */
-export class OutputVoteSummaryDto {
+export class OutputItemSummaryDto {
   totalCount: number;
   activeCount: number;
   closedCount: number;
@@ -365,16 +365,16 @@ export class OutputVoteSummaryDto {
 ```typescript
 // 在 Controller 中返回
 @Get(':id')
-async getById(@Param('id') id: string): Promise<OutputVoteDto> {
-  return this.voteService.getById(id);
+async getById(@Param('id') id: string): Promise<OutputItemDto> {
+  return this.itemService.getById(id);
 }
 ```
 
 ### 更新 DTO（Update）
 
 ```typescript
-// update-vote.dto.ts - 更新投票请求
-export class UpdateVoteDto {
+// update-item.dto.ts - 更新请求
+export class UpdateItemDto {
   @IsOptional()
   @IsEnum(['ACTIVE', 'CLOSED', 'CANCELLED'])
   status?: string;
@@ -386,8 +386,8 @@ export class UpdateVoteDto {
 }
 
 // 在 Service 中使用
-async update(id: string, dto: UpdateVoteDto): Promise<void> {
-  await this.voteRepo.update(id, dto);
+async update(id: string, dto: UpdateItemDto): Promise<void> {
+  await this.itemRepo.update(id, dto);
 }
 ```
 
@@ -421,83 +421,83 @@ src/modules/auth/
 大型模块按功能分目录：
 
 ```
-src/modules/vote/
-├── vote.module.ts
+src/modules/item/
+├── item.module.ts
 ├── controllers/             # 多个功能控制器
-│   ├── vote-create.controller.ts
-│   ├── vote-query.controller.ts
-│   └── vote-manage.controller.ts
+│   ├── item-create.controller.ts
+│   ├── item-query.controller.ts
+│   └── item-manage.controller.ts
 ├── services/                # 多个功能服务
-│   ├── vote-create.service.ts
-│   ├── vote-query.service.ts
-│   └── vote-manage.service.ts
+│   ├── item-create.service.ts
+│   ├── item-query.service.ts
+│   └── item-manage.service.ts
 ├── repositories/            # 多个功能仓储
-│   ├── vote-create.repository.ts
-│   ├── vote-query.repository.ts
-│   └── vote-manage.repository.ts
+│   ├── item-create.repository.ts
+│   ├── item-query.repository.ts
+│   └── item-manage.repository.ts
 ├── dto/                     # DTO 统一管理
-│   ├── create-vote.dto.ts
-│   ├── query-vote.dto.ts
-│   ├── output-vote.dto.ts
-│   └── update-vote.dto.ts
+│   ├── create-item.dto.ts
+│   ├── query-item.dto.ts
+│   ├── output-item.dto.ts
+│   └── update-item.dto.ts
 ├── entities/
-│   └── vote.entity.ts
+│   └── item.entity.ts
 └── types/
-    └── vote.types.ts
+    └── item.types.ts
 ```
 
 ### 模块注册（module.ts）
 
 ```typescript
-// vote.module.ts
+// item.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { VoteEntity } from './entities/vote.entity';
+import { ItemEntity } from './entities/item.entity';
 
 // Controllers
-import { VoteCreateController } from './controllers/vote-create.controller';
-import { VoteQueryController } from './controllers/vote-query.controller';
-import { VoteManageController } from './controllers/vote-manage.controller';
+import { ItemCreateController } from './controllers/item-create.controller';
+import { ItemQueryController } from './controllers/item-query.controller';
+import { ItemManageController } from './controllers/item-manage.controller';
 
 // Services
-import { VoteCreateService } from './services/vote-create.service';
-import { VoteQueryService } from './services/vote-query.service';
-import { VoteManageService } from './services/vote-manage.service';
+import { ItemCreateService } from './services/item-create.service';
+import { ItemQueryService } from './services/item-query.service';
+import { ItemManageService } from './services/item-manage.service';
 
 // Repositories
-import { VoteCreateRepository } from './repositories/vote-create.repository';
-import { VoteQueryRepository } from './repositories/vote-query.repository';
-import { VoteManageRepository } from './repositories/vote-manage.repository';
+import { ItemCreateRepository } from './repositories/item-create.repository';
+import { ItemQueryRepository } from './repositories/item-query.repository';
+import { ItemManageRepository } from './repositories/item-manage.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([VoteEntity])],
-  controllers: [VoteCreateController, VoteQueryController, VoteManageController],
+  imports: [TypeOrmModule.forFeature([ItemEntity])],
+  controllers: [ItemCreateController, ItemQueryController, ItemManageController],
   providers: [
-    VoteCreateService,
-    VoteQueryService,
-    VoteManageService,
-    VoteCreateRepository,
-    VoteQueryRepository,
-    VoteManageRepository,
+    ItemCreateService,
+    ItemQueryService,
+    ItemManageService,
+    ItemCreateRepository,
+    ItemQueryRepository,
+    ItemManageRepository,
   ],
-  exports: [VoteCreateService, VoteQueryService, VoteManageService],
+  exports: [ItemCreateService, ItemQueryService, ItemManageService],
 })
-export class VoteModule {}
+export class ItemModule {}
 ```
 
 ### 功能命名规范
 
 - `[feature]-[module].controller.ts` - 功能+模块名称
-- `[feature]-[module].service.ts` - 示例：`order-create.service.ts`
-- `[feature]-[module].repository.ts` - 示例：`order-query.repository.ts`
+- `[feature]-[module].service.ts` - 示例：`item-create.service.ts`
+- `[feature]-[module].repository.ts` - 示例：`item-query.repository.ts`
 
 **示例**：
 
-- `vote-create.controller.ts` - 创建投票的控制器
-- `vote-create.service.ts` - 创建投票的业务逻辑
-- `vote-create.repository.ts` - 创建投票的数据操作
-- `vote-query.controller.ts` - 查询投票的控制器
-- `vote-manage.controller.ts` - 管理投票的控制器（权限隔离）
+- `item-create.controller.ts` - 创建项的控制器
+- `item-create.service.ts` - 创建项的业务逻辑
+- `item-create.repository.ts` - 创建项的数据操作
+- `item-query.controller.ts` - 查询项的控制器
+- `item-manage.controller.ts` - 管理项的控制器（权限隔离）
 
 ---
 
@@ -524,16 +524,16 @@ export class VoteModule {}
 ```typescript
 // Service 层
 async getById(id: string) {
-  const vote = await this.voteRepo.findById(id);
-  if (!vote) {
-    throw new NotFoundException('投票不存在');
+  const item = await this.itemRepo.findById(id);
+  if (!item) {
+    throw new NotFoundException('记录不存在');
   }
-  return vote;
+  return item;
 }
 
 // 自动转换为 HTTP 响应：
 // HTTP 404
-// { "statusCode": 404, "message": "订单不存在", "error": "Not Found" }
+// { "statusCode": 404, "message": "记录不存在", "error": "Not Found" }
 ```
 
 ---
@@ -550,18 +550,18 @@ async getById(id: string) {
 
 ```typescript
 constructor(
-  private logger: Logger = new Logger(OrderService.name),
+  private logger: Logger = new Logger(ItemService.name),
 ) {}
 
-async create(dto: CreateVoteDto, ownerId: string) {
-  this.logger.log(`Creating vote: assemblyId=${dto.assemblyId}, ownerId=${ownerId}`);
+async create(dto: CreateItemDto, userId: string) {
+  this.logger.log(`Creating item: parentId=${dto.parentId}, userId=${userId}`);
 
   try {
-    const vote = await this.voteRepo.save(newVote);
-    this.logger.log(`Vote created: voteId=${vote.id}`);
-    return vote;
+    const item = await this.itemRepo.save(newItem);
+    this.logger.log(`Item created: itemId=${item.id}`);
+    return item;
   } catch (error) {
-    this.logger.error('Failed to create vote', error);
+    this.logger.error('Failed to create item', error);
     throw error;
   }
 }
@@ -579,24 +579,24 @@ async create(dto: CreateVoteDto, ownerId: string) {
 
 ```typescript
 // 方式1：使用 DataSource.transaction()
-async createVote(dto: CreateVoteDto): Promise<VoteEntity> {
+async createItem(dto: CreateItemDto): Promise<ItemEntity> {
   return this.dataSource.transaction(async (manager) => {
-    const vote = await manager.save(VoteEntity, voteData);
+    const item = await manager.save(ItemEntity, itemData);
     // 其他操作
-    return vote;
+    return item;
   });
 }
 
 // 方式2：使用 QueryRunner
-async createVote(dto: CreateVoteDto): Promise<VoteEntity> {
+async createItem(dto: CreateItemDto): Promise<ItemEntity> {
   const queryRunner = this.dataSource.createQueryRunner();
   await queryRunner.connect();
   await queryRunner.startTransaction();
 
   try {
-    const vote = await queryRunner.manager.save(VoteEntity, voteData);
+    const item = await queryRunner.manager.save(ItemEntity, itemData);
     await queryRunner.commitTransaction();
-    return vote;
+    return item;
   } catch (error) {
     await queryRunner.rollbackTransaction();
     throw error;
@@ -618,12 +618,12 @@ async createVote(dto: CreateVoteDto): Promise<VoteEntity> {
 ### 示例
 
 ```typescript
-@Controller('vote')
-export class VoteController {
+@Controller('item')
+export class ItemController {
   @Post()
   @UseGuards(JwtAuthGuard) // 权限检查
-  async create(@Body() dto: CreateVoteDto, @User() user: User) {
-    return this.voteService.create(dto, user.id); // 传递用户信息
+  async create(@Body() dto: CreateItemDto, @User() user: User) {
+    return this.itemService.create(dto, user.id); // 传递用户信息
   }
 }
 ```
@@ -644,12 +644,12 @@ export class VoteController {
 
 | 对象       | 命名                  | 示例             |
 | ---------- | --------------------- | ---------------- |
-| Controller | `[Module]Controller`  | `VoteController` |
-| Service    | `[Module]Service`     | `VoteService`    |
-| Repository | `[Module]Repository`  | `VoteRepository` |
-| Entity     | `[Module]Entity`      | `VoteEntity`     |
-| DTO        | `[Action][Module]Dto` | `CreateVoteDto`  |
-| Module     | `[Module]Module`      | `VoteModule`     |
+| Controller | `[Module]Controller`  | `ItemController` |
+| Service    | `[Module]Service`     | `ItemService`    |
+| Repository | `[Module]Repository`  | `ItemRepository` |
+| Entity     | `[Module]Entity`      | `ItemEntity`     |
+| DTO        | `[Action][Module]Dto` | `CreateItemDto`  |
+| Module     | `[Module]Module`      | `ItemModule`     |
 | Guard      | `[Purpose]Guard`      | `JwtAuthGuard`   |
 
 ---
@@ -705,8 +705,8 @@ export class VoteController {
 
 ```typescript
 // Service 层
-if (!assembly.isVotingOpen()) {
-  throw new BadRequestException('投票已截止');
+if (!parent.isVotingOpen()) {
+  throw new BadRequestException('操作已截止');
 }
 
 // Controller 层（自动处理）
@@ -736,13 +736,13 @@ if (!assembly.isVotingOpen()) {
 ```typescript
 constructor(private logger: Logger) {}
 
-async createVote(dto: CreateVoteDto) {
-  this.logger.log('Creating vote', { assemblyId: dto.assemblyId });
+async createItem(dto: CreateItemDto) {
+  this.logger.log('Creating item', { parentId: dto.parentId });
 
   try {
     // 业务逻辑
   } catch (error) {
-    this.logger.error('Failed to create vote', error);
+    this.logger.error('Failed to create item', error);
     throw error;
   }
 }
@@ -763,16 +763,16 @@ async createVote(dto: CreateVoteDto) {
 ```typescript
 // 方式1：使用装饰器（需要配置）
 @Transactional()
-async createOrder(dto: CreateOrderDto): Promise<Order> {
+async create(dto: CreateItemDto): Promise<ItemEntity> {
   // 事务内的操作
 }
 
 // 方式2：手动管理
-async createOrder(dto: CreateOrderDto): Promise<Order> {
+async create(dto: CreateItemDto): Promise<ItemEntity> {
   return this.dataSource.transaction(async (manager) => {
-    const order = await manager.save(OrderEntity, orderData);
+    const item = await manager.save(ItemEntity, itemData);
     // 其他操作
-    return order;
+    return item;
   });
 }
 ```
@@ -790,15 +790,15 @@ async createOrder(dto: CreateOrderDto): Promise<Order> {
 ### 示例
 
 ```typescript
-async getVote(id: string): Promise<Vote> {
-  const cached = await this.cacheService.get(`vote:${id}`);
+async getItem(id: string): Promise<ItemEntity> {
+  const cached = await this.cacheService.get(`item:${id}`);
   if (cached) return cached;
 
-  const vote = await this.voteRepo.findById(id);
-  if (vote) {
-    await this.cacheService.set(`vote:${id}`, vote, 300);
+  const item = await this.itemRepo.findById(id);
+  if (item) {
+    await this.cacheService.set(`item:${id}`, item, 300);
   }
-  return vote;
+  return item;
 }
 ```
 
@@ -815,12 +815,12 @@ async getVote(id: string): Promise<Vote> {
 ### 示例
 
 ```typescript
-@Controller('orders')
+@Controller('items')
 @UseGuards(JwtAuthGuard)
-export class OrderController {
+export class ItemController {
   @Post()
-  async create(@Body() dto: CreateVoteDto, @CurrentUser() user: User) {
-    return this.voteService.create(dto, user.id);
+  async create(@Body() dto: CreateItemDto, @CurrentUser() user: User) {
+    return this.itemService.create(dto, user.id);
   }
 }
 ```
@@ -838,16 +838,16 @@ export class OrderController {
 ### 示例
 
 ```typescript
-describe('VoteService', () => {
-  let service: VoteService;
-  let repo: VoteRepository;
+describe('ItemService', () => {
+  let service: ItemService;
+  let repo: ItemRepository;
 
   beforeEach(() => {
-    repo = mock<VoteRepository>();
-    service = new VoteService(repo);
+    repo = mock<ItemRepository>();
+    service = new ItemService(repo);
   });
 
-  it('should create vote', async () => {
+  it('should create item', async () => {
     // 测试逻辑
   });
 });
@@ -873,7 +873,7 @@ src/
 - Controller：`[Module]Controller`
 - Service：`[Module]Service`
 - Repository：`[Module]Repository`
-- DTO：`[Action][Module]Dto`（如 `CreateOrderDto`）
+- DTO：`[Action][Module]Dto`（如 `CreateItemDto`）
 - Entity：`[Module]Entity`
 
 ---
