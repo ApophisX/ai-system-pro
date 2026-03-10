@@ -1,0 +1,33 @@
+---
+description: 产品 PRD 与 API 契约文档规范
+globs: share-doc/**/*
+alwaysApply: false
+---
+
+# Product 文档规范
+
+编辑 `share-doc/` 下 PRD、API Spec、数据库设计等共享文档时遵循本规范。
+
+## 输出目录
+
+| 类型       | 路径                     | 说明                         |
+| ---------- | ------------------------ | ---------------------------- |
+| PRD        | `share-doc/prd/*.md`     | 产品需求文档                 |
+| API 契约   | `share-doc/api-spec/*.yaml` | OpenAPI 规范（初稿/更新） |
+| 数据模型   | `share-doc/database/*.md` | 表结构、实体说明（可选）   |
+| 测试用例   | `share-doc/qa/*.md`      | 测试用例文档（QA Agent 输出）|
+
+## PRD 结构
+
+1. **背景**：业务背景、问题描述
+2. **目标**：产品目标、成功指标
+3. **用户故事**：按角色拆解
+4. **功能列表**：按模块，标注优先级 P0/P1/P2
+5. **验收标准**：可测试的完成条件
+6. **非功能需求**：性能、安全、兼容性等
+
+## API 契约
+
+- 使用 OpenAPI 3.x 格式（YAML）
+- 列出接口路径、方法、请求/响应 schema
+- 与 Backend Agent 的 Swagger 保持同步

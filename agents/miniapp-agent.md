@@ -7,8 +7,7 @@
 ## 输入
 
 - `share-doc/prd/*.md` - PRD 产品需求
-- `share-doc/api-spec/*.yaml` - API 契约（OpenAPI）
-- `system/ai-system-api/docs/api-spec/*.yaml` - API 规范（如有）
+- `share-doc/api-spec/*.yaml` - API 契约（OpenAPI，与 Backend 同步）
 
 ## 输出
 

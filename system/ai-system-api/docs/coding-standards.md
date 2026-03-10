@@ -10,7 +10,7 @@
 - [architecture.md](./architecture.md) - 三层架构原则与分层职责
 - [prohibitions.md](./prohibitions.md) - 禁止事项（红线）
 - [adr.md](./adr.md) - 技术决策记录
-- `docs/api-spec/` - API 契约与 OpenAPI 规范
+- `share-doc/api-spec/` - API 契约与 OpenAPI 规范（全仓共享）
 
 ---
 

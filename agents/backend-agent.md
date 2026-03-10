@@ -7,13 +7,13 @@
 ## 输入
 
 - `share-doc/prd/*.md` - PRD 产品需求文档
-- `system/ai-system-api/docs/api-spec/*.yaml` - API 契约（如有）
+- `share-doc/api-spec/*.yaml` - API 契约（Product 初稿或已有规范）
 - `system/ai-system-api/docs/*.md` - 后端开发规范（架构、编码、红线、ADR）
 
 ## 输出
 
 - `system/ai-system-api/` - 接口实现代码
-- `system/ai-system-api/docs/api-spec/*.yaml` - OpenAPI 规范（新增/更新接口时）
+- `share-doc/api-spec/*.yaml` - OpenAPI 规范（新增/更新接口时，与 Swagger 同步）
 
 ## 技术栈
 
@@ -28,7 +28,7 @@
 1. **目录结构**: 按模块划分（如 `src/modules/base/user/`），每个模块含 controller、service、repository、dto
 2. **命名**: Controller 用 `*.controller.ts`，Service 用 `*.service.ts`，Repository 用 `*.repository.ts`
 3. **错误处理**: 使用 NestJS 内置异常（BadRequestException、NotFoundException 等）
-4. **API 文档**: 使用 Swagger 装饰器，保持 `system/ai-system-api/docs/api-spec` 与代码同步
+4. **API 文档**: 使用 Swagger 装饰器，保持 `share-doc/api-spec/*.yaml` 与代码同步
 
 ## 依赖关系
 

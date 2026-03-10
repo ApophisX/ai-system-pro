@@ -1,11 +1,11 @@
 ---
 name: backend-nestjs
-description: NestJS 后端开发规范（三层架构、TypeORM、Repository 模式）。在 apps/api 开发、编写 Controller/Service/Repository、新增接口或修改 NestJS 代码时使用。遵循 docs/backend/ 中的架构与红线。
+description: NestJS 后端开发规范（三层架构、TypeORM、Repository 模式）。在 system/ai-system-api 开发、编写 Controller/Service/Repository、新增接口或修改 NestJS 代码时使用。遵循 docs/ 中的架构与红线。
 ---
 
 # Backend NestJS 开发规范
 
-本 skill 适用于 `apps/api` 的 NestJS 后端开发，技术栈：NestJS + TypeORM + MySQL + Swagger。
+本 skill 适用于 `system/ai-system-api` 的 NestJS 后端开发，技术栈：NestJS + TypeORM + MySQL + Swagger。
 
 ## 1. 三层架构（必须遵守）
 
@@ -144,8 +144,8 @@ export class VoteRepository {
 
 ## 8. API 文档同步
 
-- 新增/修改接口时，更新 `./docs/api-spec/*.yaml`
-- Swagger 装饰器与 OpenAPI 规范保持一致
+- 新增/修改接口时，更新 `share-doc/api-spec/*.yaml`（与 Swagger 装饰器保持一致）
+- OpenAPI 规范为全仓共享，供 Frontend/Mobile/Miniapp 使用
 
 ## 9. 红线（禁止）
 

@@ -6,22 +6,22 @@
 
 ## 输入
 
-- `docs/product/*.md` - PRD 需求
-- `docs/api-spec/*.yaml` - API 契约
-- `apps/api/` - 后端代码
-- `apps/web/` - Web 代码
-- `apps/mobile/` - 移动端代码
-- `apps/miniapp/` - 小程序代码
+- `share-doc/prd/*.md` - PRD 需求
+- `share-doc/api-spec/*.yaml` - API 契约
+- `system/ai-system-api/` - 后端代码
+- `system/ai-system-web/` - Web 代码
+- `system/ai-system-app/` - 移动端代码
+- `system/ai-system-miniapp/` - 小程序代码
 
 ## 输出
 
-- 测试用例文档（`docs/qa/` 或对应 app 的 `**/__tests__/`）
+- 测试用例文档（`share-doc/qa/` 或对应 app 的 `**/__tests__/`、`**/*.spec.ts`）
 - 单元测试、集成测试、E2E 测试代码
 - 测试报告（如需要）
 
 ## 技术栈
 
-- **API 测试**: 与 apps/api 技术栈匹配（如 Jest、Supertest）
+- **API 测试**: 与 system/ai-system-api 技术栈匹配（Jest + Supertest）
 - **Web E2E**: Playwright 或 Cypress
 - **移动端**: Flutter 测试 / 小程序自动化
 

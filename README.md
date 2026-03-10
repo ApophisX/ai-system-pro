@@ -123,13 +123,13 @@ pnpm dev:weapp
 ```
 产品需求
     ↓
-Product Agent → PRD 文档 (share-doc/prd/)
+Product Agent → PRD (share-doc/prd/) + API Spec 初稿 (share-doc/api-spec/)
     ↓
-Backend Agent → API + API Spec (share-doc/api-spec/, system/ai-system-api/docs/)
+Backend Agent → API 实现 + API Spec 更新 (share-doc/api-spec/, system/ai-system-api/)
     ↓
-Frontend / Miniapp / Mobile Agent（可并行）
+Frontend / Miniapp / Mobile Agent（可并行，基于 share-doc/api-spec）
     ↓
-QA Agent → 测试
+QA Agent → 测试 (share-doc/qa/, 各 app 的 __tests__/)
 ```
 
 ## 使用方式
@@ -141,6 +141,7 @@ QA Agent → 测试
 ## 相关文档
 
 - [AGENTS.md](AGENTS.md) - Agent 列表、工作流、依赖关系
+- [share-doc/README.md](share-doc/README.md) - 共享文档目录说明（PRD、API Spec、QA）
 - [system/ai-system-api/docs/](system/ai-system-api/docs/) - 后端架构、编码规范、数据库设计
 - [system/ai-system-web/docs/](system/ai-system-web/docs/) - 前端开发规范、目录结构、与 Cursor 规则
 - [system/ai-system-web/skills/SKILL.md](system/ai-system-web/skills/SKILL.md) - 前端完整开发规范（组件、页面、API 调用等）
