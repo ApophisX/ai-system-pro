@@ -1,6 +1,6 @@
 ---
 description: 测试规范
-globs: "**/*.spec.ts","**/*.test.ts","**/*.e2e-spec.ts","**/__tests__/**","**/test/**","share-doc/qa/**/*"
+globs: ["**/*.spec.ts", "**/*.test.ts", "**/*.e2e-spec.ts", "**/__tests__/**", "**/test/**", "share-doc/qa/**/*"]
 alwaysApply: false
 ---
 

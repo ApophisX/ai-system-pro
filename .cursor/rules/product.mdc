@@ -1,6 +1,6 @@
 ---
 description: 产品 PRD 与 API 契约文档规范
-globs: share-doc/**/*
+globs: ["share-doc/prd/**/*", "share-doc/api-spec/**/*", "share-doc/database/**/*"]
 alwaysApply: false
 ---
 

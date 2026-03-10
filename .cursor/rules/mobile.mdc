@@ -6,6 +6,8 @@ alwaysApply: false
 
 # Mobile (Flutter) 规范
 
+**完整规范**：参考 `system/ai-system-app/docs/README.md` 及 [agents/mobile-agent.md](agents/mobile-agent.md)。
+
 - 目录：lib/screens/、lib/widgets/、lib/services/
 - 状态管理统一（Provider/Riverpod/Bloc 选一）
 - API 与 Web 共用，请求/响应格式一致

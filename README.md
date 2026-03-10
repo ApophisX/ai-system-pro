@@ -15,7 +15,9 @@ ai-system-pro
 │
 ├── share-doc/                 # 共享文档
 │   ├── prd/                   # PRD、需求文档
-│   └── api-spec/              # API 契约（OpenAPI）
+│   ├── api-spec/              # API 契约（OpenAPI）
+│   ├── database/              # 数据模型说明（可选）
+│   └── qa/                    # 测试用例文档（QA 产出）
 │
 ├── agents/                    # Agent 配置
 │   ├── product-agent.md

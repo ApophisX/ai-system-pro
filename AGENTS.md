@@ -8,10 +8,10 @@
 | ------------ | ------------------ | ------------------ | ------------------------------ | --------------------------------------------- |
 | **Product**  | 需求拆解、PRD 产出 | 原始需求           | share-doc/prd, api-spec 初稿   | [product-agent.md](agents/product-agent.md)   |
 | **Backend**  | NestJS API 开发    | PRD, api-spec      | system/ai-system-api, api-spec | [backend-agent.md](agents/backend-agent.md)   |
-| **Frontend** | React + MUI Web    | PRD, api-spec, sdk | system/ai-system-web           | [frontend-agent.md](agents/frontend-agent.md) |
+| **Frontend** | React + MUI Web    | PRD, api-spec      | system/ai-system-web           | [frontend-agent.md](agents/frontend-agent.md) |
 | **Mobile**   | Flutter App        | PRD, api-spec      | system/ai-system-app           | [mobile-agent.md](agents/mobile-agent.md)     |
 | **Miniapp**  | Taro 小程序        | PRD, api-spec      | system/ai-system-miniapp       | [miniapp-agent.md](agents/miniapp-agent.md)   |
-| **QA**       | 测试用例与自动化   | 各 app 代码        | 测试代码, share-doc/qa         | [qa-agent.md](agents/qa-agent.md)             |
+| **QA**       | 测试用例与自动化   | PRD, api-spec, 各 app 代码 | 测试代码, share-doc/qa         | [qa-agent.md](agents/qa-agent.md)             |
 
 ## 推荐工作流
 

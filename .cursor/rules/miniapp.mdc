@@ -6,7 +6,9 @@ alwaysApply: false
 
 # Miniapp (Taro) 规范
 
-- 目录：src/pages/、src/components/
+**完整规范**：参考 `system/ai-system-miniapp/docs/README.md` 及 [agents/miniapp-agent.md](agents/miniapp-agent.md)。
+
+- 目录：src/pages/、src/sections/、src/components/
 - 注意多端差异（微信/支付宝等）
-- API 与 Web/Mobile 共用
+- API 与 Web/Mobile 共用，优先使用 openapi2ts 生成
 - 注意包大小、域名白名单、登录态
