@@ -3,10 +3,10 @@
 
 # 指定要传输的服务器IP地址和目录路径、默认测试环境
 server=owa
-remote_directory=/home/api/xunwu-api.openworkai.com
+remote_directory=/home/api/demoapp.openworkai.com
 
 project_folder=$(pwd)
-project_name=xunwu-client-api
+project_name=demoapp
 zip_file=$project_folder/${project_name}.zip
 
 # if [ "$1" == "prod" ]; then
@@ -37,7 +37,7 @@ echo "上传成功，等待发布..."
 # 在服务器上解压缩zip包
 ssh $server "unzip -o $remote_directory/$project_name.zip -d $remote_directory"
 ssh $server "rm -rf $remote_directory/$project_name.zip"
-ssh $server "pm2 restart xunwu-client-api"
+ssh $server "pm2 restart demoapp"
 echo "发布成功"
 
 # 删除本地的zip包

@@ -6,9 +6,9 @@ set -e  # 任一命令失败立即退出
 
 # 配置
 server=owa
-remote_directory=/home/api/xunwu-api.openworkai.com
+remote_directory=/home/api/demoapp.openworkai.com
 project_folder=$(cd "$(dirname "$0")" && pwd)
-project_name=xunwu-client-api
+project_name=demoapp
 zip_file=$project_folder/${project_name}.zip
 
 # 环境切换（可按需取消注释并配置）

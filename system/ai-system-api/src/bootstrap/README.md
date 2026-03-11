@@ -112,7 +112,7 @@ maxUrlEncodedBodySize: '10mb';
 # 应用配置
 NODE_ENV=development
 DEBUG=true
-APP_NAME=xunwu-client-api
+APP_NAME=demoapp
 APP_VERSION=1.0.0
 TZ=Asia/Shanghai
 
@@ -134,7 +134,7 @@ CORS_ORIGINS=http://localhost:3000,https://example.com
 ```typescript
 if (environment === 'production') {
   const apm = require('elastic-apm-node');
-  apm.start({ serviceName: 'xunwu-client-api' });
+  apm.start({ serviceName: 'demoapp' });
 }
 ```
 
@@ -142,7 +142,7 @@ if (environment === 'production') {
 
 ```typescript
 // 集成 Jaeger 或 Zipkin
-const tracer = initJaeger('xunwu-client-api');
+const tracer = initJaeger('demoapp');
 app.use((req, res, next) => {
   const span = tracer.startSpan('http_request');
   req.span = span;
