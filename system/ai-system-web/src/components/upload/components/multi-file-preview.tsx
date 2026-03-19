@@ -59,7 +59,7 @@ export function MultiFilePreview({
           width: 1280,
           height: 720,
           autoPlay: true,
-          sources: [{ src: previewUrl }],
+          sources: [{ src: previewUrl, type: 'video/mp4' }],
         } as SlideVideo;
       }
       return {

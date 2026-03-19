@@ -47,6 +47,14 @@ export function ScrollProgress({
   thickness = 3.6,
   whenScroll = 'y',
   color = 'primary',
+  onChange,
+  onChangeCapture,
+  onBeforeInputCapture,
+  onInput,
+  onInputCapture,
+  onSubmit,
+  onSubmitCapture,
+  ref,
   ...other
 }: ScrollProgressProps) {
   const theme = useTheme();

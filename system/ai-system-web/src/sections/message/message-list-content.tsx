@@ -1,20 +1,17 @@
-import wx from 'weixin-js-sdk';
 import { MessageCircle } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useState, useCallback } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useQueryClient } from '@tanstack/react-query';
 import PullToRefresh from 'react-simple-pull-to-refresh';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { usePlatform } from 'src/hooks/use-platform';
 
 import API from 'src/services/API';
 import { useGetMessages } from 'src/actions/message';
-import { getMiniProgramWebviewUrl } from 'src/lib/bridge';
 
 import { LoadMore } from 'src/components/custom';
 import { PullingContent } from 'src/components/custom/pull-to-refresh-loading';
@@ -81,28 +78,8 @@ export function MessageListContent({ messageType }: Props) {
           }
         );
       }
-
-      if (orderId) {
-        if (lesseeId === user?.id) {
-          if (isInWeChatMiniProgram) {
-            wx.miniProgram.navigateTo({
-              url: getMiniProgramWebviewUrl(paths.my.orderDetail(orderId)),
-            });
-            return;
-          }
-          router.push(paths.my.orderDetail(orderId));
-        } else if (lessorId === user?.id) {
-          if (isInWeChatMiniProgram) {
-            wx.miniProgram.navigateTo({
-              url: getMiniProgramWebviewUrl(paths.lessor.order.detail(orderId)),
-            });
-            return;
-          }
-          router.push(paths.lessor.order.detail(orderId));
-        }
-      }
     },
-    [messageType, mutate, queryClient, router, user?.id, isInWeChatMiniProgram]
+    [messageType, mutate, queryClient]
   );
 
   // 骨架屏

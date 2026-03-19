@@ -5,27 +5,24 @@ import { Box, Grid, Typography } from '@mui/material';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { useGetAssetCategories } from 'src/actions/asset-categories';
-
-// const categories = [
-//   { name: '电动车', icon: '🛵' },
-//   { name: '工具设备', icon: '🛠️' },
-//   { name: '摄影器材', icon: '📷' },
-//   { name: '户外用品', icon: '⛺' },
-//   { name: '临时办公', icon: '💻' },
-//   { name: '其他', icon: '📦' },
-// ];
+const categories = [
+  { name: '电动车', icon: '🛵' },
+  { name: '工具设备', icon: '🛠️' },
+  { name: '摄影器材', icon: '📷' },
+  { name: '户外用品', icon: '⛺' },
+  { name: '临时办公', icon: '💻' },
+  { name: '其他', icon: '📦' },
+];
 
 export const CategoryGrid = () => {
   const router = useRouter();
-  const { data: categories } = useGetAssetCategories({ displayOnHome: true });
   return (
     <Grid spacing={2} container>
       {categories.map((item) => (
         <CategoryItem
-          key={item.code}
+          key={item.name}
           data={item}
-          onClick={() => router.push(`${paths.rental.goods.root}?category=${item.code}`)}
+          onClick={() => router.push(`${paths.rental.goods.root}?category=${item.name}`)}
         />
       ))}
       <CategoryItem
@@ -46,7 +43,7 @@ export const CategoryGrid = () => {
   );
 };
 
-const CategoryItem = (props: { data: MyApi.AppOutputAssetCategoryDto; onClick: () => void }) => {
+const CategoryItem = (props: { data: any; onClick: () => void }) => {
   const { data, onClick } = props;
   return (
     <Grid

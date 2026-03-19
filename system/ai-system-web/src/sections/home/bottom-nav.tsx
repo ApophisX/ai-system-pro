@@ -1,9 +1,9 @@
 import type { BottomNavigationProps } from '@mui/material';
 
-import React from 'react';
 import { m } from 'framer-motion';
+import React, { useMemo } from 'react';
+import { Plus, Compass } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Compass, Users } from 'lucide-react';
 
 import { Box, Paper, Badge, BottomNavigation, BottomNavigationAction } from '@mui/material';
 
@@ -11,10 +11,8 @@ import { paths } from 'src/routes/paths';
 import { useRouter, usePathname } from 'src/routes/hooks';
 
 import API from 'src/services/API';
-import * as bridge from 'src/lib/bridge';
 import { PlatformDetector } from 'src/utils';
 
-import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 
 import { useAuthContext } from 'src/auth/hooks';
@@ -52,14 +50,15 @@ export const BottomNav: React.FC<BottomNavProps> = () => {
   });
 
   // 根据当前路径确定激活的tab
-  const getActiveValue = () => {
-    if (pathname === paths.home.root) return 'home';
-    if (pathname.startsWith(paths.community.root)) return 'community';
-    if (pathname === paths.rental.goodsPublish.root) return 'goodsPublish';
-    if (pathname === paths.message.root) return 'message';
-    if (pathname === paths.my.root) return 'my';
-    return 'home';
-  };
+  const activeTab = useMemo(
+    () =>
+      ({
+        home: paths.home.root,
+        message: paths.message.root,
+        my: paths.my.root,
+      })[pathname] || 'home',
+    [pathname]
+  );
 
   const handleChange: BottomNavigationProps['onChange'] = (_event, newValue) => {
     // 根据tab值进行路由跳转
@@ -67,20 +66,11 @@ export const BottomNav: React.FC<BottomNavProps> = () => {
       case 'home':
         router.replace(paths.home.root);
         break;
-      case 'community':
-        router.replace(paths.community.root);
-        break;
-      case 'goodsPublish':
-        router.push(paths.rental.goodsPublish.root);
-        break;
       case 'message':
         router.replace(paths.message.root);
         break;
       case 'my':
         router.replace(paths.my.root);
-        break;
-      case 'scanRent':
-        bridge.navigateTo('/pages/scan-qrcode/index');
         break;
       default:
         break;
@@ -107,7 +97,7 @@ export const BottomNav: React.FC<BottomNavProps> = () => {
     >
       <BottomNavigation
         showLabels
-        value={getActiveValue()}
+        value={activeTab}
         onChange={handleChange}
         sx={{
           height: 84,
@@ -118,32 +108,12 @@ export const BottomNav: React.FC<BottomNavProps> = () => {
       >
         <BottomNavigationAction
           value="home"
-          label="发现"
+          label="首页"
           icon={<Compass size={22} />}
           component={m.button}
           whileTap={{ scale: 0.9 }}
           slotProps={{ label: { sx: { mt: 0.5 } } }}
         />
-
-        <BottomNavigationAction
-          value="community"
-          label="社区"
-          icon={<Users size={22} />}
-          component={m.button}
-          whileTap={{ scale: 0.9 }}
-          slotProps={{ label: { sx: { mt: 0.5 } } }}
-        />
-
-        {userRole === 'lessee' && (
-          <BottomNavigationAction
-            label="扫码租物"
-            value="scanRent"
-            component={m.button}
-            whileTap={{ scale: 0.9 }}
-            icon={<Iconify icon="solar:code-scan-bold" width={22} height={22} />}
-            slotProps={{ label: { sx: { mt: 0.5 } } }}
-          />
-        )}
 
         {user?.userType === 'enterprise' && user.isEnterpriseVerified && userRole === 'lessor' && (
           <BottomNavigationAction

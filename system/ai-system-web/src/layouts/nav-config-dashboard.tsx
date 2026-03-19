@@ -70,45 +70,9 @@ export const navData: NavSectionProps['data'] = [
     subheader: 'Management',
     items: [
       {
-        title: '企业管理',
-        path: paths.dashboard.management.enterprise,
-        icon: ICONS.dashboard,
-      },
-      {
-        title: '订单管理',
-        icon: ICONS.order,
-        path: paths.dashboard.management.order.root,
-        children: [
-          {
-            title: '押金审核',
-            path: paths.dashboard.management.order.depositAudit,
-          },
-        ],
-      },
-      {
-        title: '资产管理',
-        path: paths.dashboard.management.asset.list,
-        icon: ICONS.product,
-      },
-      {
-        title: '评论管理',
-        path: paths.dashboard.management.review.list,
-        icon: ICONS.chat,
-      },
-      {
-        title: '举报管理',
-        path: paths.dashboard.management.report.list,
-        icon: ICONS.lock,
-      },
-      {
         title: '用户管理',
         path: paths.dashboard.management.user.list,
         icon: ICONS.user,
-      },
-      {
-        title: '社区管理',
-        path: paths.dashboard.management.community.list,
-        icon: ICONS.folder,
       },
       // DEMO
       // {

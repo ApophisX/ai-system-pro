@@ -1,26 +1,18 @@
 import type { UserRole } from './types';
 import type { PaletteColorKey } from 'src/theme/core/palette';
 
+import React from 'react';
 import { m } from 'framer-motion';
-import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   Star,
-  Heart,
   Users,
   Shield,
   MapPin,
-  Wallet,
-  Package,
   Settings,
-  Calendar,
-  BarChart3,
-  DollarSign,
-  HelpCircle,
-  CreditCard,
-  ShoppingBag,
-  MessageSquare,
   Building,
+  HelpCircle,
+  MessageSquare,
 } from 'lucide-react';
 
 import {
@@ -39,8 +31,6 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import API from 'src/services/API';
-import { useGetCreditAccount } from 'src/actions/credit';
-import { useGetLesseeStatistics, useGetLessorStatistics } from 'src/actions/statistics';
 
 import { useAuthContext } from 'src/auth/hooks';
 
@@ -131,8 +121,6 @@ type FunctionGroup = {
 function useGetCommonFunctionGroups(role: UserRole): FunctionGroup[] {
   const router = useRouter();
   const { user } = useAuthContext();
-  const { data: creditAccount } = useGetCreditAccount(role);
-  const { userRole } = useGetUserRole();
 
   const { data: count } = useQuery({
     queryKey: ['unread-message-count'],
@@ -159,26 +147,6 @@ function useGetCommonFunctionGroups(role: UserRole): FunctionGroup[] {
           onClick: () => router.push(paths.my.contact.list),
           color: 'secondary',
         },
-        {
-          icon: <Building size={20} />,
-          title: '我的社区',
-          subtitle: '查看我的社区',
-          onClick: () => router.push(paths.community.my),
-          color: 'primary',
-        },
-        ...(userRole === 'lessor'
-          ? ([
-              {
-                icon: <Star size={20} />,
-                title: '评价管理',
-                subtitle: '查看资产评价',
-                onClick: () => {
-                  router.push(paths.lessor.evaluation.root);
-                },
-                color: 'warning',
-              },
-            ] as FunctionGroup['items'])
-          : []),
       ],
     },
     {
@@ -191,13 +159,6 @@ function useGetCommonFunctionGroups(role: UserRole): FunctionGroup[] {
           badge: user?.isVerified ? undefined : '去认证',
           onClick: () => router.push(paths.my.verify),
           color: user?.isVerified ? 'success' : 'warning',
-        },
-        {
-          icon: <BarChart3 size={20} />,
-          title: '信用中心',
-          subtitle: `当前信用分：${creditAccount?.creditScore ?? 0}`,
-          onClick: () => router.push(paths.my.credit),
-          color: 'info',
         },
         {
           icon: <Users size={20} />,
@@ -275,120 +236,6 @@ function FunctionGroupsView({ functionGroups }: FunctionGroupsViewProps) {
 // 出租方功能列表
 // ----------------------------------------------------------------------
 
-/** 出租方（lessor）功能列表：资产管理 + 其他功能 + 账户与设置 */
-export function LessorFunctionList() {
-  const router = useRouter();
-  const commonFunctionGroups = useGetCommonFunctionGroups('lessor');
-
-  const { data: lessorStatistics } = useGetLessorStatistics();
-
-  const functionGroups = useMemo(() => {
-    const lessorGroups: FunctionGroup[] = [
-      {
-        title: '资产管理',
-        items: [
-          {
-            icon: <Package size={20} />,
-            title: '我的资产',
-            subtitle: '查看我资产数量',
-            badge: lessorStatistics?.totalAssetCount || 0,
-            onClick: () => router.push(paths.lessor.assets.root),
-            color: 'primary',
-          },
-          {
-            icon: <ShoppingBag size={20} />,
-            title: '出租订单',
-            subtitle: '查看所有出租订单',
-            badge: lessorStatistics?.inProgressOrderCount || 0,
-            onClick: () => router.push(paths.lessor.order.root),
-            color: 'success',
-          },
-          {
-            icon: <DollarSign size={20} />,
-            title: '收入明细',
-            subtitle: '查看收入记录和统计',
-            onClick: () => router.push(paths.lessor.income),
-            color: 'warning',
-          },
-          {
-            icon: <Calendar size={20} />,
-            title: '订单管理',
-            subtitle: '处理订单和确认',
-            onClick: () => router.push(paths.lessor.order.management),
-            color: 'info',
-          },
-        ],
-      },
-    ];
-    return [...lessorGroups, ...commonFunctionGroups];
-  }, [
-    lessorStatistics?.totalAssetCount,
-    lessorStatistics?.inProgressOrderCount,
-    commonFunctionGroups,
-    router,
-  ]);
-
-  return <FunctionGroupsView functionGroups={functionGroups} />;
-}
-
-// ----------------------------------------------------------------------
-// 承租方功能列表
-// ----------------------------------------------------------------------
-
-/** 承租方（lessee）功能列表：租赁管理 + 其他功能 + 账户与设置 */
-export function LesseeFunctionList() {
-  const router = useRouter();
-  const { data: lesseeStatistics } = useGetLesseeStatistics();
-  const commonFunctionGroups = useGetCommonFunctionGroups('lessee');
-  const functionGroups = useMemo(() => {
-    const lesseeGroups: FunctionGroup[] = [
-      {
-        title: '租赁管理',
-        items: [
-          {
-            icon: <ShoppingBag size={20} />,
-            title: '我的订单',
-            subtitle: '查看所有租赁订单',
-            badge: lesseeStatistics?.orderCount,
-            onClick: () => router.push(paths.my.orders),
-            color: 'success',
-          },
-          {
-            icon: <CreditCard size={20} />,
-            title: '待支付',
-            subtitle: '待支付的订单',
-            badge: lesseeStatistics?.pendingPaymentOrderCount,
-            onClick: () => router.push(paths.my.pendingPayment),
-            color: 'error',
-          },
-          {
-            icon: <Wallet size={20} />,
-            title: '押金管理',
-            subtitle: '查看押金状态和记录',
-            onClick: () => router.push(paths.my.deposit),
-            color: 'info',
-          },
-          {
-            icon: <Heart size={20} />,
-            title: '我的收藏',
-            subtitle: '收藏的资产',
-            onClick: () => router.push(paths.my.favorites),
-            color: 'warning',
-          },
-        ],
-      },
-    ];
-    return [...lesseeGroups, ...commonFunctionGroups];
-  }, [
-    router,
-    lesseeStatistics?.orderCount,
-    lesseeStatistics?.pendingPaymentOrderCount,
-    commonFunctionGroups,
-  ]);
-
-  return <FunctionGroupsView functionGroups={functionGroups} />;
-}
-
 // ----------------------------------------------------------------------
 // 按角色选择展示的功能列表（兼容原有用法）
 // ----------------------------------------------------------------------
@@ -399,8 +246,9 @@ interface FunctionListProps {
 
 /** 根据 role 展示出租方或承租方功能列表 */
 export function FunctionList({ role }: FunctionListProps) {
-  if (role === 'lessor') {
-    return <LessorFunctionList />;
-  }
-  return <LesseeFunctionList />;
+  return (
+    <Box>
+      <>List</>
+    </Box>
+  );
 }

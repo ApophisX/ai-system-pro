@@ -6,8 +6,6 @@ import { useRef, useState, useEffect } from 'react';
 
 import { Box, Stack, alpha, Typography } from '@mui/material';
 
-import { paths } from 'src/routes/paths';
-
 import { CONFIG } from 'src/global-config';
 
 import { Image } from 'src/components/image';
@@ -27,10 +25,7 @@ export type UserQrcodeDialogPayload = {
  */
 function getQrcodeUrl(role: UserRole, userId?: string): string {
   if (typeof window === 'undefined') return '';
-  if (role === 'lessor' && userId) {
-    return `${paths.rental.shop(userId)}`;
-  }
-  return `${paths.rental.goods.root}`;
+  return '123456';
 }
 
 // ----------------------------------------------------------------------

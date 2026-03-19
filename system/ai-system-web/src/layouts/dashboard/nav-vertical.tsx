@@ -47,14 +47,16 @@ export function NavVertical({
       )}
 
       <Scrollbar fillContent>
-        <NavSectionVertical
-          data={data}
-          cssVars={cssVars}
-          checkPermissions={checkPermissions}
-          sx={{ px: 2, flex: '1 1 auto' }}
-        />
+        <>
+          <NavSectionVertical
+            data={data}
+            cssVars={cssVars}
+            checkPermissions={checkPermissions}
+            sx={{ px: 2, flex: '1 1 auto' }}
+          />
 
-        {slots?.bottomArea}
+          {slots?.bottomArea}
+        </>
       </Scrollbar>
     </>
   );

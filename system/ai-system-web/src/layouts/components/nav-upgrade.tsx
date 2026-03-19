@@ -66,12 +66,7 @@ export function NavUpgrade({ sx, ...other }: BoxProps) {
           </Typography>
         </Box>
 
-        <Button
-          variant="contained"
-          href={paths.minimalStore}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <Button variant="contained" href={CONFIG.webUrl} target="_blank" rel="noopener noreferrer">
           Upgrade to Pro
         </Button>
       </Box>

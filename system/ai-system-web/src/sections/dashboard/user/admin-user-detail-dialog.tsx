@@ -26,8 +26,6 @@ import { MyConfirmDialog } from 'src/components/custom';
 import { MultiFilePreview } from 'src/components/upload';
 import { MyDialog } from 'src/components/custom/my-dialog';
 
-import { EnterpriseRejectDialog } from 'src/sections/dashboard/enterprise/enterprise-reject-dialog';
-
 // ----------------------------------------------------------------------
 
 const STATUS_MAP: Record<
@@ -279,260 +277,250 @@ export function AdminUserDetailDialog({
   const enterpriseInfo = user ? ENTERPRISE_STATUS_MAP[user.enterpriseVerificationStatus] : null;
 
   return (
-    <>
-      <MyDialog
-        dialogTitle="用户详情"
-        open={open}
-        onClose={onClose}
-        maxWidth="md"
-        showActionButtons={false}
-        fullWidth
-        slotProps={{
-          paper: {
-            sx: {
-              maxHeight: '90vh',
-            },
+    <MyDialog
+      dialogTitle="用户详情"
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      showActionButtons={false}
+      fullWidth
+      slotProps={{
+        paper: {
+          sx: {
+            maxHeight: '90vh',
           },
-        }}
-      >
-        <DialogContent dividers sx={{ pt: 2 }}>
-          {isPending ? (
-            <Stack spacing={2}>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Skeleton variant="circular" width={64} height={64} />
-                <Stack spacing={1} sx={{ flex: 1 }}>
-                  <Skeleton variant="text" width={200} height={32} />
-                  <Skeleton variant="text" width={150} height={24} />
-                </Stack>
+        },
+      }}
+    >
+      <DialogContent dividers sx={{ pt: 2 }}>
+        {isPending ? (
+          <Stack spacing={2}>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Skeleton variant="circular" width={64} height={64} />
+              <Stack spacing={1} sx={{ flex: 1 }}>
+                <Skeleton variant="text" width={200} height={32} />
+                <Skeleton variant="text" width={150} height={24} />
               </Stack>
-              <Skeleton variant="rectangular" height={200} />
             </Stack>
-          ) : user ? (
-            <Stack spacing={3}>
-              {/* 基本信息 */}
-              <Stack direction="row" spacing={2} alignItems="flex-start">
-                <Avatar src={user.avatar} alt={displayName} sx={{ width: 64, height: 64 }}>
-                  {displayName?.charAt(0) || '?'}
-                </Avatar>
-                <Stack spacing={1} sx={{ flex: 1 }}>
-                  <Typography variant="h6">{displayName}</Typography>
-                  <Stack direction="row" spacing={1} flexWrap="wrap">
-                    {statusInfo && (
-                      <Chip label={statusInfo.label} color={statusInfo.color} size="small" />
-                    )}
-                    <Chip label={USER_TYPE_MAP[user.userType]} size="small" variant="outlined" />
-                    {enterpriseInfo && (
-                      <Chip
-                        label={`企业认证${enterpriseInfo.label}`}
-                        color={enterpriseInfo.color}
-                        size="small"
-                      />
-                    )}
+            <Skeleton variant="rectangular" height={200} />
+          </Stack>
+        ) : user ? (
+          <Stack spacing={3}>
+            {/* 基本信息 */}
+            <Stack direction="row" spacing={2} alignItems="flex-start">
+              <Avatar src={user.avatar} alt={displayName} sx={{ width: 64, height: 64 }}>
+                {displayName?.charAt(0) || '?'}
+              </Avatar>
+              <Stack spacing={1} sx={{ flex: 1 }}>
+                <Typography variant="h6">{displayName}</Typography>
+                <Stack direction="row" spacing={1} flexWrap="wrap">
+                  {statusInfo && (
+                    <Chip label={statusInfo.label} color={statusInfo.color} size="small" />
+                  )}
+                  <Chip label={USER_TYPE_MAP[user.userType]} size="small" variant="outlined" />
+                  {enterpriseInfo && (
                     <Chip
-                      label={`${RISK_LEVEL_MAP[user.riskLevel].label}风险`}
-                      color={RISK_LEVEL_MAP[user.riskLevel].color}
+                      label={`企业认证${enterpriseInfo.label}`}
+                      color={enterpriseInfo.color}
                       size="small"
-                      variant="outlined"
                     />
-                  </Stack>
-                  <Typography variant="body2" color="text.secondary">
-                    实名：{VERIFICATION_STATUS_MAP[user.verificationStatus]}
-                  </Typography>
+                  )}
+                  <Chip
+                    label={`${RISK_LEVEL_MAP[user.riskLevel].label}风险`}
+                    color={RISK_LEVEL_MAP[user.riskLevel].color}
+                    size="small"
+                    variant="outlined"
+                  />
                 </Stack>
+                <Typography variant="body2" color="text.secondary">
+                  实名：{VERIFICATION_STATUS_MAP[user.verificationStatus]}
+                </Typography>
               </Stack>
+            </Stack>
 
-              <Divider />
+            <Divider />
 
-              {/* 账号与联系 */}
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                  账号与联系
-                </Typography>
-                <Stack spacing={0.5}>
-                  <InfoRow label="用户名" value={user.username} />
-                  <InfoRow label="手机" value={user.phone ? fMobile(user.phone) : undefined} />
-                  <InfoRow label="邮箱" value={user.email} />
-                  <InfoRow label="注册来源" value={user.source} />
-                  <InfoRow
-                    label="注册时间"
-                    value={user.createdAt ? fDateTime(user.createdAt) : undefined}
-                  />
-                  <InfoRow
-                    label="验证时间"
-                    value={user.verifiedAt ? fDateTime(user.verifiedAt) : undefined}
-                  />
-                  <InfoRow
-                    label="最后登录"
-                    value={user.lastLoginAt ? fDateTime(user.lastLoginAt) : undefined}
-                  />
-                  <InfoRow label="最后登录 IP" value={user.lastLoginIp} />
-                </Stack>
-              </Box>
+            {/* 账号与联系 */}
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                账号与联系
+              </Typography>
+              <Stack spacing={0.5}>
+                <InfoRow label="用户名" value={user.username} />
+                <InfoRow label="手机" value={user.phone ? fMobile(user.phone) : undefined} />
+                <InfoRow label="邮箱" value={user.email} />
+                <InfoRow label="注册来源" value={user.source} />
+                <InfoRow
+                  label="注册时间"
+                  value={user.createdAt ? fDateTime(user.createdAt) : undefined}
+                />
+                <InfoRow
+                  label="验证时间"
+                  value={user.verifiedAt ? fDateTime(user.verifiedAt) : undefined}
+                />
+                <InfoRow
+                  label="最后登录"
+                  value={user.lastLoginAt ? fDateTime(user.lastLoginAt) : undefined}
+                />
+                <InfoRow label="最后登录 IP" value={user.lastLoginIp} />
+              </Stack>
+            </Box>
 
-              <Divider />
+            <Divider />
 
-              {/* 资料 */}
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                  用户资料
-                </Typography>
-                <Stack spacing={0.5}>
-                  <InfoRow label="昵称" value={user.profile?.nickname} />
-                  <InfoRow label="真实姓名" value={user.profile?.realName} />
-                  <InfoRow label="企业名称" value={user.profile?.companyName} />
-                  <InfoRow label="法人代表" value={user.profile?.legalRepresentative} />
-                  <InfoRow label="企业地址" value={user.profile?.companyAddress} />
-                  <InfoRow label="个人地址" value={user.profile?.address} />
-                </Stack>
-              </Box>
+            {/* 资料 */}
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                用户资料
+              </Typography>
+              <Stack spacing={0.5}>
+                <InfoRow label="昵称" value={user.profile?.nickname} />
+                <InfoRow label="真实姓名" value={user.profile?.realName} />
+                <InfoRow label="企业名称" value={user.profile?.companyName} />
+                <InfoRow label="法人代表" value={user.profile?.legalRepresentative} />
+                <InfoRow label="企业地址" value={user.profile?.companyAddress} />
+                <InfoRow label="个人地址" value={user.profile?.address} />
+              </Stack>
+            </Box>
 
-              <Divider />
+            <Divider />
 
-              {/* 资产与信用 */}
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                  资产与信用
-                </Typography>
-                <Stack spacing={0.5}>
-                  <InfoRow label="可用余额" value={fCurrency((user.availableBalance ?? 0) / 100)} />
-                  <InfoRow label="冻结余额" value={fCurrency((user.frozenBalance ?? 0) / 100)} />
-                  <InfoRow label="信用评分" value={String(user.creditScore)} />
-                  <InfoRow
-                    label="资产限制"
-                    value={`每日 ${user.maxDailyAssetCreationCount} / 总计 ${user.maxTotalAssetCount === 0 ? '不限' : user.maxTotalAssetCount} / 实例 ${user.maxTotalAssetInventoryCount}`}
-                  />
-                </Stack>
-              </Box>
+            {/* 资产与信用 */}
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                资产与信用
+              </Typography>
+              <Stack spacing={0.5}>
+                <InfoRow label="可用余额" value={fCurrency((user.availableBalance ?? 0) / 100)} />
+                <InfoRow label="冻结余额" value={fCurrency((user.frozenBalance ?? 0) / 100)} />
+                <InfoRow label="信用评分" value={String(user.creditScore)} />
+                <InfoRow
+                  label="资产限制"
+                  value={`每日 ${user.maxDailyAssetCreationCount} / 总计 ${user.maxTotalAssetCount === 0 ? '不限' : user.maxTotalAssetCount} / 实例 ${user.maxTotalAssetInventoryCount}`}
+                />
+              </Stack>
+            </Box>
 
-              {/* 身份证信息 */}
-              {user.isVerified && (
+            {/* 身份证信息 */}
+            {user.isVerified && (
+              <>
+                <Divider />
+                <Box>
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                    ID 信息
+                  </Typography>
+                  <MultiFilePreview files={user.profile?.idCardPhotoUrls ?? []} />
+                </Box>
+              </>
+            )}
+
+            {/* 企业认证材料 */}
+            {user.userType === 'enterprise' &&
+              (user.profile?.businessLicensePhotoUrls?.length ||
+                user.profile?.attachmentUrls?.length) && (
                 <>
                   <Divider />
                   <Box>
                     <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                      ID 信息
+                      认证材料
                     </Typography>
-                    <MultiFilePreview files={user.profile?.idCardPhotoUrls ?? []} />
+                    <MultiFilePreview
+                      files={(user.profile?.businessLicensePhotoUrls ?? []).concat(
+                        user.profile?.attachmentUrls ?? []
+                      )}
+                    />
                   </Box>
                 </>
               )}
-
-              {/* 企业认证材料 */}
-              {user.userType === 'enterprise' &&
-                (user.profile?.businessLicensePhotoUrls?.length ||
-                  user.profile?.attachmentUrls?.length) && (
-                  <>
-                    <Divider />
-                    <Box>
-                      <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                        认证材料
-                      </Typography>
-                      <MultiFilePreview
-                        files={(user.profile?.businessLicensePhotoUrls ?? []).concat(
-                          user.profile?.attachmentUrls ?? []
-                        )}
-                      />
-                    </Box>
-                  </>
-                )}
-            </Stack>
-          ) : (
-            <Typography color="text.secondary">加载失败或用户不存在</Typography>
-          )}
-        </DialogContent>
-        {user && (
-          <DialogActions sx={{ px: 3, py: 2, flexWrap: 'wrap', gap: 1 }}>
-            {/* 账户状态操作 */}
-            {user.status === 'active' && (
-              <>
-                <Button
-                  variant="outlined"
-                  color="warning"
-                  onClick={handleFreeze}
-                  disabled={actionLoading}
-                  startIcon={<Iconify icon="solar:lock-password-outline" />}
-                >
-                  冻结
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={handleBan}
-                  disabled={actionLoading}
-                  startIcon={<Iconify icon="solar:forbidden-circle-bold" />}
-                >
-                  封禁
-                </Button>
-              </>
-            )}
-            {user.status === 'frozen' && (
-              <Button
-                variant="outlined"
-                color="success"
-                onClick={handleUnfreeze}
-                disabled={actionLoading}
-                startIcon={<Iconify icon="solar:restart-bold" />}
-              >
-                解冻
-              </Button>
-            )}
-            {user.status === 'banned' && (
-              <Button
-                variant="outlined"
-                color="success"
-                onClick={handleUnban}
-                disabled={actionLoading}
-                startIcon={<Iconify icon="solar:restart-bold" />}
-              >
-                解封
-              </Button>
-            )}
-
-            {/* 企业认证操作 */}
-            {user.userType === 'enterprise' && user.enterpriseVerificationStatus === 'pending' && (
-              <>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={handleRejectEnterpriseOpen}
-                  disabled={actionLoading}
-                >
-                  拒绝
-                </Button>
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleApproveEnterprise}
-                  disabled={actionLoading}
-                  startIcon={<Iconify icon="eva:checkmark-fill" />}
-                >
-                  通过
-                </Button>
-              </>
-            )}
-            {user.userType === 'enterprise' && user.enterpriseVerificationStatus === 'verified' && (
+          </Stack>
+        ) : (
+          <Typography color="text.secondary">加载失败或用户不存在</Typography>
+        )}
+      </DialogContent>
+      {user && (
+        <DialogActions sx={{ px: 3, py: 2, flexWrap: 'wrap', gap: 1 }}>
+          {/* 账户状态操作 */}
+          {user.status === 'active' && (
+            <>
               <Button
                 variant="outlined"
                 color="warning"
-                onClick={handleRevertEnterprise}
+                onClick={handleFreeze}
                 disabled={actionLoading}
-                startIcon={<Iconify icon="solar:restart-bold" />}
+                startIcon={<Iconify icon="solar:lock-password-outline" />}
               >
-                恢复待审核
+                冻结
               </Button>
-            )}
-          </DialogActions>
-        )}
-      </MyDialog>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleBan}
+                disabled={actionLoading}
+                startIcon={<Iconify icon="solar:forbidden-circle-bold" />}
+              >
+                封禁
+              </Button>
+            </>
+          )}
+          {user.status === 'frozen' && (
+            <Button
+              variant="outlined"
+              color="success"
+              onClick={handleUnfreeze}
+              disabled={actionLoading}
+              startIcon={<Iconify icon="solar:restart-bold" />}
+            >
+              解冻
+            </Button>
+          )}
+          {user.status === 'banned' && (
+            <Button
+              variant="outlined"
+              color="success"
+              onClick={handleUnban}
+              disabled={actionLoading}
+              startIcon={<Iconify icon="solar:restart-bold" />}
+            >
+              解封
+            </Button>
+          )}
 
-      <EnterpriseRejectDialog
-        open={rejectDialog.open}
-        onClose={handleRejectEnterpriseClose}
-        onSubmit={handleRejectEnterpriseSubmit}
-        loading={actionLoading}
-        enterpriseName={user?.profile?.companyName}
-      />
-    </>
+          {/* 企业认证操作 */}
+          {user.userType === 'enterprise' && user.enterpriseVerificationStatus === 'pending' && (
+            <>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleRejectEnterpriseOpen}
+                disabled={actionLoading}
+              >
+                拒绝
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleApproveEnterprise}
+                disabled={actionLoading}
+                startIcon={<Iconify icon="eva:checkmark-fill" />}
+              >
+                通过
+              </Button>
+            </>
+          )}
+          {user.userType === 'enterprise' && user.enterpriseVerificationStatus === 'verified' && (
+            <Button
+              variant="outlined"
+              color="warning"
+              onClick={handleRevertEnterprise}
+              disabled={actionLoading}
+              startIcon={<Iconify icon="solar:restart-bold" />}
+            >
+              恢复待审核
+            </Button>
+          )}
+        </DialogActions>
+      )}
+    </MyDialog>
   );
 }
 

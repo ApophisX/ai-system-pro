@@ -20,8 +20,6 @@ import {
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { useGetCreditAccount } from 'src/actions/credit';
-
 import { Iconify } from 'src/components/iconify';
 
 import { useAuthContext } from 'src/auth/hooks';
@@ -72,7 +70,6 @@ export const UserProfileHeader = React.forwardRef<HTMLDivElement, UserProfileHea
     const dialogs = useDialogs();
 
     const { user } = useAuthContext();
-    const { data: creditAccount } = useGetCreditAccount(role);
 
     if (!user) return null;
 
@@ -104,7 +101,7 @@ export const UserProfileHeader = React.forwardRef<HTMLDivElement, UserProfileHea
                 sx={{ position: 'relative' }}
               >
                 <Avatar
-                  src={user?.profile.avatar}
+                  src={user?.avatar}
                   sx={{
                     width: 64,
                     height: 64,
@@ -167,9 +164,6 @@ export const UserProfileHeader = React.forwardRef<HTMLDivElement, UserProfileHea
 
                 <Stack direction="row" spacing={1} alignItems="center">
                   <Iconify icon="eva:star-fill" sx={{ color: 'warning.main' }} />
-                  <Typography variant="body2" sx={{ color: alpha('#fff', 0.9) }}>
-                    信用分 {creditAccount?.creditScore ?? 0}
-                  </Typography>
                 </Stack>
               </Stack>
             </Stack>

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Save } from '@mui/icons-material';
-import { Stack, Paper, Alert, Button, Typography, Container } from '@mui/material';
+import { Stack, Paper, Alert, Button, Container, Typography } from '@mui/material';
 
 import API from 'src/services/API';
 import { AddressSchema } from 'src/common/zod-schema/address-schema';
@@ -76,29 +76,29 @@ export function NewEditContactFormContent({
     defaultValues,
     values: formData
       ? {
-        name: formData.contactName,
-        phone: formData.contactPhone,
-        wechat: formData.wechat,
-        address: {
-          province: {
-            label: formData.province ?? '',
-            value: formData.provinceCode ?? '',
+          name: formData.contactName,
+          phone: formData.contactPhone,
+          wechat: formData.wechat,
+          address: {
+            province: {
+              label: formData.province ?? '',
+              value: formData.provinceCode ?? '',
+            },
+            city: {
+              label: formData.city ?? '',
+              value: formData.cityCode ?? '',
+            },
+            district: {
+              label: formData.district ?? '',
+              value: formData.districtCode ?? '',
+            },
+            address: formData.address,
+            addressName: formData.addressName,
+            longitude: formData.longitude?.toString(),
+            latitude: formData.latitude?.toString(),
           },
-          city: {
-            label: formData.city ?? '',
-            value: formData.cityCode ?? '',
-          },
-          district: {
-            label: formData.district ?? '',
-            value: formData.districtCode ?? '',
-          },
-          address: formData.address,
-          addressName: formData.addressName,
-          longitude: formData.longitude?.toString(),
-          latitude: formData.latitude?.toString(),
-        },
-        isDefault: formData.isDefault,
-      }
+          isDefault: formData.isDefault,
+        }
       : undefined,
   });
 
@@ -230,15 +230,17 @@ export function NewEditContactFormContent({
         )}
 
         {/* 提交按钮 */}
-        <Container sx={{
-          position: "fixed",
-          bottom: 0,
-          zIndex: 10,
-          left: 0,
-          right: 0,
-          py: 2.5,
-          backgroundColor: "background.paper",
-        }}>
+        <Container
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            zIndex: 10,
+            left: 0,
+            right: 0,
+            py: 2.5,
+            backgroundColor: 'background.paper',
+          }}
+        >
           <Button
             fullWidth
             size="large"
@@ -248,7 +250,7 @@ export function NewEditContactFormContent({
             loading={isSubmitting}
             loadingIndicator="保存中..."
             startIcon={<Save />}
-            sx={{borderRadius: 2}}
+            sx={{ borderRadius: 2 }}
           >
             {formData ? '保存修改' : '保存联系人'}
           </Button>

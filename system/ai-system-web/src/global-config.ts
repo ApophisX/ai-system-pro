@@ -9,15 +9,12 @@ export type ConfigValue = {
   appName: string;
   appVersion: string;
   areaJsonUrl: string;
+  webUrl: string;
   serverUrl: string;
   assetsDir: string;
   amapKey: string; // jsapi key
   amapWebServerKey: string; // web server key
   ossDir: string;
-  withdraw: {
-    minAmount: number;
-    maxAmount: number;
-  };
   defaultArea: {
     province: { label: string; value: string } | null;
     city: { label: string; value: string } | null;
@@ -48,20 +45,17 @@ export type ConfigValue = {
 // ----------------------------------------------------------------------
 
 export const CONFIG: ConfigValue = {
-  areaJsonUrl: 'https://gelin-window.oss-rg-china-mainland.aliyuncs.com/public/area.json?version=1',
-  appName: '藏宝壳',
+  areaJsonUrl: import.meta.env.VITE_AREA_JSON_URL ?? '',
+  appName: import.meta.env.VITE_APP_NAME ?? '',
   appVersion: packageJson.version,
+  webUrl: import.meta.env.VITE_WEB_URL ?? '',
   serverUrl: import.meta.env.VITE_SERVER_URL ?? '',
   assetsDir: import.meta.env.VITE_ASSETS_DIR ?? '',
   amapKey: import.meta.env.VITE_AMAP_KEY ?? '',
-  amapWebServerKey: 'fa89ab1514f1d1a604362c2a083071c4',
+  amapWebServerKey: import.meta.env.VITE_AMAP_WEB_SERVER_KEY ?? '',
   defaultArea: DEFAULT_LOCATION,
   isDev: import.meta.env.VITE_IS_DEV === 'true',
-  ossDir: 'xuwu',
-  withdraw: {
-    minAmount: 0.01,
-    maxAmount: 100000,
-  },
+  ossDir: import.meta.env.VITE_OSS_DIR ?? '',
   /**
    * Auth
    * @method jwt | amplify | firebase | supabase | auth0

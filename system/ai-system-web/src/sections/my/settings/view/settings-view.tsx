@@ -7,7 +7,6 @@ import {
   Lock,
   Moon,
   Globe,
-  Store,
   LogOut,
   FileText,
   Building2,
@@ -43,7 +42,6 @@ import { signOut } from 'src/auth/context/jwt';
 import { useAuthContext } from 'src/auth/hooks';
 
 import { useGetUserRole } from '../../hooks/use-role';
-import { useHasMerchantInvitePermission } from '../../merchant-invite/hooks/use-has-merchant-invite-permission';
 
 // ----------------------------------------------------------------------
 
@@ -55,7 +53,6 @@ export default function SettingsView() {
 
   const { checkUserSession, user } = useAuthContext();
   const { userRole, setUserRole } = useGetUserRole();
-  const { hasPermission: hasMerchantInvitePermission } = useHasMerchantInvitePermission();
 
   const settings = useSettingsContext();
   const { setMode, colorScheme } = useColorScheme();
@@ -148,37 +145,26 @@ export default function SettingsView() {
         // },
       ])}
 
-      {(userRole === 'lessor' || hasMerchantInvitePermission) &&
-        renderGroup('认证与邀请', [
-          ...(userRole === 'lessor'
-            ? [
-                {
-                  icon: <Building2 size={20} />,
-                  // title: '企业认证',
-                  title: '合作商认证',
-                  subtitle:
-                    user?.enterpriseVerificationStatus === 'verified'
-                      ? '已认证'
-                      : user?.enterpriseVerificationStatus === 'pending'
-                        ? '审核中'
-                        : user?.enterpriseVerificationStatus === 'rejected'
-                          ? '未通过'
-                          : '未认证',
-                  onClick: () => router.push(paths.my.enterpriseVerify),
-                },
-              ]
-            : []),
-          ...(hasMerchantInvitePermission
-            ? [
-                {
-                  icon: <Store size={20} />,
-                  title: '商户邀请',
-                  subtitle: '邀请商户入驻，获得分润',
-                  onClick: () => router.push(paths.my.merchantInvite),
-                },
-              ]
-            : []),
-        ])}
+      {renderGroup('认证与邀请', [
+        ...(userRole === 'lessor'
+          ? [
+              {
+                icon: <Building2 size={20} />,
+                // title: '企业认证',
+                title: '合作商认证',
+                subtitle:
+                  user?.enterpriseVerificationStatus === 'verified'
+                    ? '已认证'
+                    : user?.enterpriseVerificationStatus === 'pending'
+                      ? '审核中'
+                      : user?.enterpriseVerificationStatus === 'rejected'
+                        ? '未通过'
+                        : '未认证',
+                onClick: () => router.push(paths.my.enterpriseVerify),
+              },
+            ]
+          : []),
+      ])}
 
       {renderGroup('通用设置', [
         {
@@ -210,7 +196,7 @@ export default function SettingsView() {
             <Switch
               checked={notifications}
               onChange={(e) => setNotifications(e.target.checked)}
-              inputProps={{ 'aria-label': 'notifications' }}
+              slotProps={{ input: { 'aria-label': 'notifications' } }}
             />
           ),
         },

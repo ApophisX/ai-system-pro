@@ -61,7 +61,7 @@ export const ScrollAppBar: React.FC<ScrollAppBarProps> = ({ visible }) => {
             {/* 左侧：头像和用户信息 */}
             <Stack direction="row" spacing={1.5} alignItems="center" sx={{ flex: 1, minWidth: 0 }}>
               <Avatar
-                src={user?.profile.avatar}
+                src={user?.avatar}
                 sx={{
                   width: 36,
                   height: 36,

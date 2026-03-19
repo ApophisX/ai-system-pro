@@ -14,6 +14,9 @@ export enum AuthLoginType {
   SMS = 2,
 }
 
+/**
+ * 短信场景枚举
+ */
 export enum SmsScene {
   /** 注册 */
   REGISTER = 'register',
@@ -49,28 +52,8 @@ export const MenuTypeMap = {
 
 /** ================================ 字典内容  ================================*/
 
-export const DictionaryCodeMap = {
-  AssetCategory: 'asset_category',
-  GpsCompany: 'gps_company',
-};
-
 export const UploadMaxSize = {
   image: 5 * 1024 * 1024,
-};
-
-export enum PayMode {
-  // 先付
-  FIRST_PAY = 'firstPay',
-  // 先用后付
-  FIRST_USE_LATER_PAY = 'firstUseLaterPay',
-  // 自定义
-  CUSTOM = 'custom',
-}
-
-export const PayModeMap: Record<string, string> = {
-  [PayMode.FIRST_PAY]: '先付后用',
-  [PayMode.FIRST_USE_LATER_PAY]: '先用后付',
-  // [PayMode.CUSTOM]: '自定义',
 };
 
 export const DEFAULT_LOCATION = {

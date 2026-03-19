@@ -9,15 +9,15 @@ import { TermsContentView } from 'src/sections/my/terms/view';
 const METADATA_MAP: Record<string, { title: string; description: string }> = {
   about: {
     title: '关于我们',
-    description: '关于我们 - 全民租赁平台介绍',
+    description: '关于我们',
   },
   privacy: {
     title: '隐私政策',
-    description: '隐私政策 - 全民租赁平台隐私条款',
+    description: '隐私政策',
   },
   'user-agreement': {
     title: '用户协议',
-    description: '用户协议 - 全民租赁平台服务条款',
+    description: '用户协议',
   },
 };
 

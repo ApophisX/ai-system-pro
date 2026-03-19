@@ -25,9 +25,6 @@
 /* lightbox */
 @import './components/lightbox/styles.css';
 
-/* pull to refresh */
-@import './style/pull-to-refresh.css';
-
 /** **************************************
 * Baseline
 *************************************** */

@@ -8,10 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Stack, Paper, Button } from '@mui/material';
 
-import { useRouter } from 'src/routes/hooks';
-
 import API from 'src/services/API';
-import { navigateBack } from 'src/lib/bridge';
 import { ossUploader } from 'src/lib/oss-uploader';
 
 import { Field } from 'src/components/hook-form';
@@ -49,7 +46,6 @@ type ProfileEditSchemaType = z.infer<typeof ProfileEditSchema>;
 
 export function ProfileEditView(props: { user: UserType }) {
   const { user } = props;
-  const router = useRouter();
 
   const { checkUserSession } = useAuthContext();
 
@@ -59,7 +55,7 @@ export function ProfileEditView(props: { user: UserType }) {
       nickname: user?.username || user?.profile?.nickname || '',
       gender: user?.profile?.gender || 'unknown',
       bio: user?.profile?.bio || '',
-      avatar: user.avatar || user?.profile.avatar || '',
+      avatar: user?.avatar,
     },
   });
 

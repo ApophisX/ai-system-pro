@@ -1,11 +1,11 @@
 import type { Theme, SxProps } from '@mui/material/styles';
-import type { TextFieldProps } from '@mui/material/TextField';
 import type { ButtonBaseProps } from '@mui/material/ButtonBase';
+import type { DefaultInputComponentProps } from 'react-phone-number-input';
 import type { Props, Value, Country } from 'react-phone-number-input/input';
 
 // ----------------------------------------------------------------------
 
-export type PhoneInputProps = Props<TextFieldProps> & {
+export type PhoneInputProps = Props<DefaultInputComponentProps> & {
   hideSelect?: boolean;
 };
 

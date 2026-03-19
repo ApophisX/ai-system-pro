@@ -1,4 +1,5 @@
 import type { TextFieldProps } from '@mui/material/TextField';
+import type { DefaultInputComponentProps } from 'react-phone-number-input';
 import type { PhoneValue, PhoneCountry, PhoneInputProps } from './types';
 
 import { debounce } from 'es-toolkit';
@@ -163,7 +164,7 @@ export function PhoneInput({
 
 // ----------------------------------------------------------------------
 
-function CustomInput({ ref, ...other }: TextFieldProps) {
+function CustomInput({ ref, ...other }: DefaultInputComponentProps) {
   return <TextField inputRef={ref} {...other} />;
 }
 

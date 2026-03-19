@@ -143,30 +143,32 @@ export function ContactListContent(props: ContactListContentProps) {
       pullingContent={<PullingContent />}
       onRefresh={handleReload}
     >
-      {contacts.length === 0 ? (
-        renderEmpty()
-      ) : (
-        <Stack spacing={2} flex={1} px={2} pt={2} pb={4}>
-          {contacts.map((contact, index) => (
-            <ContactCard
-              checked={checkedId === contact.id}
-              key={contact.id}
-              data={contact}
-              onSelect={onSelect}
-              onMoreClick={handleMoreClick}
-            />
-          ))}
-        </Stack>
-      )}
+      <>
+        {contacts.length === 0 ? (
+          renderEmpty()
+        ) : (
+          <Stack spacing={2} flex={1} px={2} pt={2} pb={4}>
+            {contacts.map((contact, index) => (
+              <ContactCard
+                checked={checkedId === contact.id}
+                key={contact.id}
+                data={contact}
+                onSelect={onSelect}
+                onMoreClick={handleMoreClick}
+              />
+            ))}
+          </Stack>
+        )}
 
-      {/* 加载更多触发器 */}
-      <LoadMore
-        hasMore={hasMore}
-        loading={dataValidating}
-        onLoadMore={() => setPage((prev) => prev + 1)}
-        disabled={dataLoading}
-        show={contacts.length > 0 && contacts.length >= 10}
-      />
+        {/* 加载更多触发器 */}
+        <LoadMore
+          hasMore={hasMore}
+          loading={dataValidating}
+          onLoadMore={() => setPage((prev) => prev + 1)}
+          disabled={dataLoading}
+          show={contacts.length > 0 && contacts.length >= 10}
+        />
+      </>
     </PullToRefresh>
   );
 

@@ -39,7 +39,7 @@ export function ShopCodeView() {
       >
         <Stack alignItems="center" justifyContent="center" mb={3}>
           <Avatar
-            src={user?.profile.avatar}
+            src={user?.avatar}
             alt={user?.username}
             variant="circular"
             sx={{
@@ -54,7 +54,7 @@ export function ShopCodeView() {
 
         {/* 二维码邀请码 */}
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ mb: 2 }}>
-          <QrcodeImage value={`${paths.rental.shop(user?.id)}`} size={280} />
+          <QrcodeImage value="123456" size={280} />
         </Box>
         <Typography variant="h5" sx={{ color: '#fff' }}>
           长按二维码，保存到相册
