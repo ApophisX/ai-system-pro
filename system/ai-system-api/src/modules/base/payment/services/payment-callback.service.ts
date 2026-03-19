@@ -19,8 +19,6 @@ import {
   DepositRefundFailedEvent,
   PayOverdueFeeCompletedEvent,
 } from '../events';
-import { DepositEntity } from '@/modules/rental-order/entities';
-import { DepositStatus } from '@/modules/rental-order/enums';
 
 /**
  * 支付回调服务
@@ -254,86 +252,6 @@ export class PaymentCallbackService {
   }
 
   /**
-   * 处理押金退款回调
-   *
-   * 该方法处理第三方支付平台（如微信支付）的押金退款回调通知
-   * 处理完成后会更新押金状态，并发射相应的事件通知订单模块
-   *
-   * 处理流程：
-   * 1. 根据退款单号查找押金记录
-   * 2. 幂等性检查（避免重复处理）
-   * 3. 更新押金状态
-   * 4. 发射押金退款事件通知其他模块
-   *
-   * @param refundNo 退款单号（平台内部）
-   * @param thirdPartyRefundNo 第三方退款流水号
-   * @param status 退款状态
-   * @param callbackData 原始回调数据
-   * @returns 更新后的押金记录
-   */
-  async handleDepositRefundCallback(
-    refundNo: string,
-    thirdPartyRefundNo: string,
-    status: RefundStatus,
-    callbackData?: WxPay.Notify.RefundResult,
-  ): Promise<DepositEntity> {
-    // 1. 根据退款单号查找押金记录
-    const deposit = await this.dataSource.manager.findOne(DepositEntity, {
-      where: { refundNo },
-    });
-
-    if (!deposit) {
-      this.logger.error(`押金记录不存在: refundNo=${refundNo}`);
-      throw new NotFoundException('押金记录不存在');
-    }
-
-    // 2. 幂等性检查：如果已经处理过相同的回调，直接返回
-    if (deposit.thirdPartyRefundNo === thirdPartyRefundNo && deposit.status === DepositStatus.RETURNED) {
-      this.logger.warn(`重复的押金退款回调，已忽略: refundNo=${refundNo}, thirdPartyRefundNo=${thirdPartyRefundNo}`);
-      return deposit;
-    }
-
-    const refundedAt = new Date();
-
-    // 3-4. 在事务中更新押金状态并发射事件
-    const updatedDeposit = await this.dataSource.transaction(async manager => {
-      // 3. 更新押金记录
-      deposit.thirdPartyRefundNo = thirdPartyRefundNo;
-      deposit.refundCallbackData = callbackData;
-
-      if (status === RefundStatus.COMPLETED) {
-        deposit.status = DepositStatus.RETURNED;
-        deposit.unfrozenAt = refundedAt;
-      } else if (status === RefundStatus.FAILED || status === RefundStatus.CANCELED) {
-        deposit.status = DepositStatus.FAILED;
-        deposit.paymentFailureReason =
-          status === RefundStatus.CANCELED
-            ? '退款已关闭'
-            : callbackData?.refund_status === 'ABNORMAL'
-              ? '退款异常'
-              : '退款失败';
-      }
-      // PROCESSING 状态保持 RETURNED，等待后续回调
-
-      const savedDeposit = await manager.save(DepositEntity, deposit);
-
-      this.logger.log(
-        `押金退款回调处理完成: depositNo=${deposit.depositNo}, refundNo=${refundNo}, status=${status}, depositStatus=${savedDeposit.status}`,
-      );
-
-      return savedDeposit;
-    });
-
-    // 4. 事务提交后发射事件，确保数据已持久化
-    // 使用 setImmediate 确保事件在当前事务完成后异步发射
-    setImmediate(() => {
-      this.emitDepositRefundEvent(updatedDeposit, thirdPartyRefundNo, status, refundedAt, callbackData);
-    });
-
-    return updatedDeposit;
-  }
-
-  /**
    * 处理退款回调
    *
    * 该方法处理第三方支付平台（如微信支付）的退款回调通知
@@ -510,55 +428,6 @@ export class PaymentCallbackService {
     });
 
     return updatedRefund;
-  }
-
-  /**
-   * 发射押金退款事件
-   *
-   * @param deposit 押金记录
-   * @param thirdPartyRefundNo 第三方退款流水号
-   * @param status 退款状态
-   * @param refundedAt 退款完成时间
-   * @param callbackData 原始回调数据
-   */
-  private emitDepositRefundEvent(
-    deposit: DepositEntity,
-    thirdPartyRefundNo: string,
-    status: RefundStatus,
-    refundedAt: Date,
-    callbackData?: WxPay.Notify.RefundResult,
-  ): void {
-    try {
-      if (status === RefundStatus.COMPLETED) {
-        const event = new DepositRefundCompletedEvent(
-          deposit.orderNo,
-          deposit.thirdPartyPaymentNo || '',
-          deposit.depositNo,
-          deposit.refundNo || '',
-          thirdPartyRefundNo,
-          Number(deposit.amount),
-          refundedAt,
-          callbackData,
-        );
-
-        this.logger.log(`发射押金退款完成事件: depositNo=${deposit.depositNo}, refundNo=${deposit.refundNo}`);
-        this.eventEmitter.emit(PaymentEvents.DEPOSIT_REFUND_COMPLETED, event);
-      } else if (status === RefundStatus.FAILED) {
-        const event = new DepositRefundFailedEvent(
-          deposit.orderNo,
-          deposit.thirdPartyPaymentNo || '',
-          deposit.depositNo,
-          deposit.refundNo || '',
-          deposit.paymentFailureReason || '退款失败',
-          callbackData,
-        );
-
-        this.logger.log(`发射押金退款失败事件: depositNo=${deposit.depositNo}, refundNo=${deposit.refundNo}`);
-        this.eventEmitter.emit(PaymentEvents.DEPOSIT_REFUND_FAILED, event);
-      }
-    } catch (error) {
-      this.logger.error(`发射押金退款事件失败: depositNo=${deposit.depositNo}`, error);
-    }
   }
 
   /**

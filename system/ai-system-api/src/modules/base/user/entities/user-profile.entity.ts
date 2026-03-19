@@ -5,18 +5,7 @@ import { UserEntity } from './user.entity';
 import { Gender } from '../enums';
 import { ColumnWithApi } from '@/common/decorators/column-with-api.decorator';
 import { IsEnum, IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
-
-/**
- * 紧急联系人单条结构（JSON 项）
- */
-export interface EmergencyContactItem {
-  /** 姓名 */
-  name: string;
-  /** 手机号 */
-  phone: string;
-  /** 关系类型，如：父母、配偶、子女、朋友等 */
-  relationshipType: string;
-}
+import { EmergencyContactItem } from '../types/user.type';
 
 /**
  * 用户资料实体
@@ -32,13 +21,6 @@ export class UserProfileEntity extends BaseAreaNumericIdEntity {
    */
   @ColumnWithApi({ type: 'uuid', name: 'user_id', comment: '用户 ID' })
   userId: string;
-
-  /**
-   * 头像 URL
-   */
-  @Expose()
-  @ColumnWithApi({ length: 500, nullable: true, comment: '头像 URL', optional: true })
-  avatar?: string;
 
   /**
    * 昵称

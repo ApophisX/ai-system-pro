@@ -1,7 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DataSource } from 'typeorm';
-import { MerchantInviteEvents } from '@/modules/merchant-invite/events/merchant-invite.events';
 import { UserRepository } from '../repositories/user.repository';
 import { UserProfileRepository } from '../repositories/user-profile.repository';
 import { UserEntity } from '../entities/user.entity';
@@ -56,9 +55,7 @@ export class UserService {
     if (!profile) {
       profile = await this.profileRepo.createProfile({ userId });
     }
-    if (profile.avatar) {
-      profile.avatar = this.ossService.getSignatureUrl(profile.avatar);
-    }
+
     return plainToInstance(OutputUserProfileDto, profile, {
       excludeExtraneousValues: true,
       exposeDefaultValues: true,
@@ -85,10 +82,6 @@ export class UserService {
       profile = await this.profileRepo.createProfile({
         userId: user.id,
       });
-    }
-
-    if (profile.avatar) {
-      profile.avatar = this.ossService.getSignatureUrl(profile.avatar);
     }
 
     // 合并用户和资料信息
@@ -285,7 +278,6 @@ export class UserService {
       enterpriseVerifiedAt: new Date(),
     });
 
-    this.eventEmitter.emit(MerchantInviteEvents.USER_VERIFIED, { userId });
     this.logger.log(`企业认证审核通过: userId=${userId}`);
   }
 
@@ -376,10 +368,6 @@ export class UserService {
     let profile = user.profile;
     if (!profile) {
       profile = await this.profileRepo.createProfile({ userId: user.id });
-    }
-
-    if (profile.avatar) {
-      profile.avatar = this.ossService.getSignatureUrl(profile.avatar);
     }
 
     profile.idCardPhotoUrls = profile.idCardPhotoUrls?.map(url => this.ossService.getSignatureUrl(url)) || [];

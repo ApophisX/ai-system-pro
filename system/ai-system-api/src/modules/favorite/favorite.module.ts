@@ -14,7 +14,6 @@ import { FavoriteService } from './services';
 import { AppFavoriteController } from './controllers';
 
 // 依赖模块
-import { AssetModule } from '../asset/asset.module';
 import { OssModule } from '../base/aliyun-oss/oss.module';
 
 /**
@@ -35,7 +34,7 @@ import { OssModule } from '../base/aliyun-oss/oss.module';
  * GET    /app/favorite/count        获取收藏数量
  */
 @Module({
-  imports: [AssetModule, OssModule, TypeOrmModule.forFeature([FavoriteEntity])],
+  imports: [OssModule, TypeOrmModule.forFeature([FavoriteEntity])],
   controllers: [AppFavoriteController],
   providers: [FavoriteRepository, FavoriteService],
   exports: [FavoriteService, FavoriteRepository],

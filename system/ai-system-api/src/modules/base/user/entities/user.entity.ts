@@ -1,4 +1,4 @@
-import { Entity, Column, Index, OneToOne, Unique } from 'typeorm';
+import { Entity, Column, Index, OneToOne } from 'typeorm';
 import { Expose, Exclude } from 'class-transformer';
 import { BaseEntity } from '@/infrastructure/database/entities/base.entity';
 import { UserType, VerificationStatus, EnterpriseVerificationStatus, RiskLevel, AccountStatus } from '../enums';
@@ -12,9 +12,10 @@ import { ColumnWithApi } from '@/common/decorators/column-with-api.decorator';
  * 不区分出租方/承租方身份，同一用户可同时是出租方和承租方
  */
 @Entity('user')
-@Index(['phone'], { unique: true, where: 'deleted_at IS NULL' })
 @Index(['email'], { unique: true, where: 'deleted_at IS NULL' })
-@Unique(['phone', 'email'])
+@Index(['username'])
+@Index(['wechatOpenid'])
+@Index(['wechatUnionid'])
 export class UserEntity extends BaseEntity {
   /**
    * 用户名
@@ -34,7 +35,7 @@ export class UserEntity extends BaseEntity {
    * 手机号（唯一）
    */
   @Expose()
-  @ColumnWithApi({ length: 20, nullable: true, comment: '手机号', optional: true })
+  @ColumnWithApi({ length: 20, nullable: true, comment: '手机号', optional: true, unique: true })
   phone?: string;
 
   /**

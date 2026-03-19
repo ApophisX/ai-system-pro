@@ -192,64 +192,67 @@ ORM Entity：TypeORM 数据库表映射
 - 包含数据库字段和关系
 - 不包含业务逻辑
 - 根据字段意义，选择合适的字段类型
-- 不用特意定义
+- 不用特意定义 `name`，SnakeNamingStrategy 会统一处理
 
-```ts
-// @Column({ type: 'varchar', name: "verification_status" }) 不用定义name，后面会统一处理
-@Column({ type: 'varchar'})
-verificationStatus;
-string;
+### 字段声明：必须使用 @ColumnWithApi
+
+**禁止** 同时写 `@ApiProperty` + `@Column`，会导致注释写两遍。**必须** 使用 `@ColumnWithApi` 组合装饰器，一次声明同时生效于 Column 与 Swagger。
+
+参考：[`src/modules/base/user/entities/user.entity.ts`](../modules/base/user/entities/user.entity.ts)
+
+```typescript
+// ❌ 错误：注释写两遍
+@ApiProperty({ description: '社区名称' })
+@Column({ type: 'varchar', length: 100, comment: '社区名称' })
+name: string;
+
+// ✅ 正确：使用 @ColumnWithApi，comment 同时用于 Column 和 ApiProperty
+@ColumnWithApi({ type: 'varchar', length: 100, comment: '社区名称' })
+name: string;
+
+// 可选字段加 optional: true
+@ColumnWithApi({ type: 'varchar', length: 255, nullable: true, comment: '小区地址', optional: true })
+address?: string;
+
+// 枚举字段
+@ColumnWithApi({ type: 'enum', enum: StatusEnum, default: StatusEnum.PENDING, comment: '状态' })
+status: StatusEnum;
 ```
 
 ### 示例
 
 ```typescript
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-
+import { Entity, Column, ManyToOne } from 'typeorm';
 import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsOptional } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
+import { BaseEntity } from '@/infrastructure/database/entities/base.entity';
+import { ColumnWithApi } from '@/common/decorators/column-with-api.decorator';
 
-import {
-  BaseEntity,
-  BaseEntityWithNumericId, //如果实体比较简单，不考虑ID问题可用这个继承
-} from '@/infrastructure/database/entities/base.entity';
 @Entity('items')
 export class ItemEntity extends BaseEntity {
-  @ApiProperty();
-  @PrimaryGeneratedColumn('uuid')
-  @Expose();
-  id: string;
-
-  @ApiProperty();
-  @Column({ type: 'uuid' })
-  @Expose();
+  @Expose()
+  @ColumnWithApi({ type: 'uuid', comment: '用户 ID' })
+  @IsNotEmpty()
   userId: string;
 
-  @ApiProperty();
-  @Column({ type: 'uuid' })
-  @Expose();
-  @IsNotEmpty();
+  @Expose()
+  @ColumnWithApi({ type: 'uuid', comment: '父级 ID' })
+  @IsNotEmpty()
   parentId: string;
 
-  @ApiProperty();
-  @Column({ type: 'varchar', length: 200 })
-  @Expose();
-  @IsNotEmpty();
+  @Expose()
+  @ColumnWithApi({ type: 'varchar', length: 200, comment: '标题' })
+  @IsNotEmpty()
   title: string;
 
-  @ApiProperty();
-  @Column({ type: 'varchar', length: 50 })
-  @Expose();
+  @Expose()
+  @ColumnWithApi({ type: 'varchar', length: 50, comment: '状态' })
   status: string;
 
-  @ApiPropertyOptional();
-  @Column({ type: 'varchar', length: 500 })
-  @Expose();
-  @IsOptional();
-  remark: string;
+  @Expose()
+  @ColumnWithApi({ type: 'varchar', length: 500, nullable: true, comment: '备注', optional: true })
+  remark?: string;
 
-  // 关系
   @ManyToOne(() => ParentEntity)
   parent: ParentEntity;
 }

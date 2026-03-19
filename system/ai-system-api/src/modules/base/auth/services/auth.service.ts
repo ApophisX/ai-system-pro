@@ -8,8 +8,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { MerchantInviteEvents } from '@/modules/merchant-invite/events/merchant-invite.events';
-import { MerchantInviteRegisterService } from '@/modules/merchant-invite/services';
 import { FindOptionsWhere } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -47,28 +45,17 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly captchaService: CaptchaService,
     private readonly eventEmitter: EventEmitter2,
-    private readonly merchantInviteRegister: MerchantInviteRegisterService,
   ) {}
 
   /**
    * 用户注册
    */
   async signUp(dto: RegisterDto): Promise<OutputAuthDto> {
-    const inviteCode = dto.inviteCode?.trim();
-    if (inviteCode) {
-      await this.merchantInviteRegister.validateInviteCode(inviteCode);
-    }
     const isSmsValid = await this.smsService.verifyCode(dto.phone || '', SmsScene.REGISTER, dto.code);
     if (!isSmsValid) {
       throw new UnauthorizedException('短信验证码错误或已过期');
     }
     const savedUser = await this.registerUser(dto);
-    if (inviteCode) {
-      this.eventEmitter.emit(MerchantInviteEvents.USER_REGISTERED_WITH_INVITE, {
-        userId: savedUser.id,
-        inviteCode,
-      });
-    }
     return this.generateTokens(savedUser);
   }
 
@@ -134,24 +121,14 @@ export class AuthService {
       });
       // 没有找到用户，则注册（登录即注册）
       if (!user) {
-        const inviteCode = dto.inviteCode?.trim();
-        if (inviteCode) {
-          await this.merchantInviteRegister.validateInviteCode(inviteCode);
-        }
         const authConfig = this.configService.get(AUTH_CONFIG_KEY) as AuthConfig;
         user = await this.registerUser({
           phone: dto.phoneOrEmail,
           // password: authConfig.defaultPassword,
           password: generateRandomString(18, true), // 随机密码
           username: authConfig.defaultUsername + Date.now().toString(),
-          inviteCode: inviteCode || undefined,
+          inviteCode: undefined,
         });
-        if (inviteCode) {
-          this.eventEmitter.emit(MerchantInviteEvents.USER_REGISTERED_WITH_INVITE, {
-            userId: user.id,
-            inviteCode,
-          });
-        }
       }
     } else {
       throw new BadRequestException('登录类型错误');
@@ -199,7 +176,7 @@ export class AuthService {
       }
 
       return this.generateTokens(user);
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('刷新令牌无效或已过期');
     }
   }

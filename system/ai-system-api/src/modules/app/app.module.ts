@@ -14,8 +14,7 @@ import { CaptchaModule } from '../base/captcha/captcha.module';
 import { SmsModule } from '../base/sms/sms.module';
 import { HealthModule } from '../base/health/health.module';
 import { AclModule } from '../base/acl/acl.module';
-import { AssetModule } from '../asset/asset.module';
-import { ContactModule } from '../contact/contact.module';
+import { ContactModule } from '../base/contact/contact.module';
 import { FavoriteModule } from '../favorite/favorite.module';
 import { AllExceptionsFilter } from '@/common/filters/all-exceptions.filter';
 import { TransformResponseInterceptor } from '@/common/interceptors/transform-response.interceptor';
@@ -23,17 +22,7 @@ import { LoggingInterceptor } from '@/common/interceptors/logging.interceptor';
 import { AuthModule } from '../base/auth/auth.module';
 import { OssModule } from '../base/aliyun-oss/oss.module';
 import { MessageModule } from '../base/message/message.module';
-import { ChatModule } from '../base/chat/chat.module';
-import { PaymentModule } from '../base/payment/payment.module';
-import { RentalOrderModule } from '../rental-order/rental-order.module';
-import { StatisticsModule } from '../statistics/statistics.module';
-import { WithdrawModule } from '../withdraw/withdraw.module';
 import { RecognitionModule } from '../base/recognition/recognition.module';
-import { CreditModule } from '../credit/credit.module';
-import { ReviewsModule } from '../reviews/reviews.module';
-import { MerchantInviteModule } from '../merchant-invite/merchant-invite.module';
-import { ReportModule } from '../report/report.module';
-import { CommunityModule } from '../community/community.module';
 
 @Module({
   imports: [
@@ -74,34 +63,34 @@ import { CommunityModule } from '../community/community.module';
     RecognitionModule,
     // ACL 权限控制模块
     AclModule,
-    // 资产模块
-    AssetModule,
+    // // 资产模块
+    // AssetModule,
     // 联系人模块
     ContactModule,
     // 收藏模块
     FavoriteModule,
     // 消息中心模块
     MessageModule,
-    // 聊天模块
-    ChatModule,
-    // 支付模块
-    PaymentModule,
-    // 租赁订单模块
-    RentalOrderModule,
-    // 统计模块
-    StatisticsModule,
-    // 提现模块
-    WithdrawModule,
-    // 信用模块
-    CreditModule,
-    // 租赁评价模块
-    ReviewsModule,
-    // 商户邀请裂变模块
-    MerchantInviteModule,
-    // 举报模块
-    ReportModule,
-    // 社区模块
-    CommunityModule,
+    // // 聊天模块
+    // ChatModule,
+    // // 支付模块
+    // PaymentModule,
+    // // 租赁订单模块
+    // RentalOrderModule,
+    // // 统计模块
+    // StatisticsModule,
+    // // 提现模块
+    // WithdrawModule,
+    // // 信用模块
+    // CreditModule,
+    // // 租赁评价模块
+    // ReviewsModule,
+    // // 商户邀请裂变模块
+    // MerchantInviteModule,
+    // // 举报模块
+    // ReportModule,
+    // // 社区模块
+    // CommunityModule,
   ],
   controllers: [AppController],
   providers: [

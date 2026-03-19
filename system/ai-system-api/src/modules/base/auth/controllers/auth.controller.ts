@@ -97,7 +97,7 @@ export class AuthController {
   async getCurrentUser(@CurrentUser() user): PromiseApiResponse<OutputUserDetailDto> {
     const profile = await this.userService.getCurrentUserProfile(user.id);
     return {
-      data: { ...user, profile, avatar: profile.avatar },
+      data: { ...user, profile },
     };
   }
 

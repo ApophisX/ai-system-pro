@@ -2,7 +2,6 @@ import { Entity, Column, Index, ManyToOne, JoinColumn, Unique } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { BaseEntity } from '@/infrastructure/database/entities/base.entity';
 import { UserEntity } from '@/modules/base/user/entities/user.entity';
-import { AssetEntity } from '@/modules/asset/entities/asset.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
@@ -43,11 +42,4 @@ export class FavoriteEntity extends BaseEntity {
   @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
-
-  /**
-   * 资产关系（多对一）
-   */
-  @ManyToOne(() => AssetEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'asset_id' })
-  asset: AssetEntity;
 }

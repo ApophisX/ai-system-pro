@@ -190,13 +190,6 @@ export class UserProfileRepository extends Repository<UserProfileEntity> {
   }
 
   /**
-   * 更新头像
-   */
-  async updateAvatar(userId: string, avatar: string): Promise<void> {
-    await this.update({ userId }, { avatar });
-  }
-
-  /**
    * 更新昵称
    */
   async updateNickname(userId: string, nickname: string): Promise<void> {

@@ -5,9 +5,7 @@ import { FavoriteEntity } from '../entities';
 import { CreateFavoriteDto, QueryFavoriteDto, OutputFavoriteDto } from '../dto';
 import { PaginationMetaDto } from '@/common/dtos/base-query.dto';
 import { plainToInstance } from 'class-transformer';
-import { AssetRepository } from '@/modules/asset/repositories';
 import { OssService } from '@/modules/base/aliyun-oss/oss.service';
-import { AssetService } from '@/modules/asset/services';
 
 /**
  * 收藏服务
@@ -20,8 +18,6 @@ export class FavoriteService {
 
   constructor(
     private readonly favoriteRepo: FavoriteRepository,
-    private readonly assetRepo: AssetRepository,
-    private readonly assetService: AssetService,
     private readonly dataSource: DataSource,
     private readonly ossService: OssService,
   ) {}
@@ -29,54 +25,8 @@ export class FavoriteService {
   /**
    * 创建收藏
    */
-  async create(userId: string, dto: CreateFavoriteDto): Promise<OutputFavoriteDto> {
-    // 检查资产是否存在
-    const asset = await this.assetRepo.findById(dto.assetId);
-
-    // 检查是否已收藏
-    const existing = await this.favoriteRepo.findByUserIdAndAssetId(userId, asset.id);
-    if (existing) {
-      throw new ConflictException('已收藏该资产');
-    }
-
-    // 创建收藏
-    const favorite = await this.dataSource.transaction(async manager => {
-      const newFavorite = manager.create(FavoriteEntity, {
-        userId,
-        assetId: asset.id,
-      });
-      const savedFavorite = await manager.save(FavoriteEntity, newFavorite);
-
-      // 更新资产的收藏数
-      await manager.increment('asset', { id: asset.id }, 'favoriteCount', 1);
-
-      return savedFavorite;
-    });
-
-    // 加载关联数据
-    const favoriteWithRelations = await this.favoriteRepo.findOne({
-      where: { id: favorite.id },
-      relations: ['asset', 'asset.rentalPlans', 'asset.category', 'asset.owner'],
-    });
-
-    if (!favoriteWithRelations) {
-      throw new NotFoundException('收藏创建失败');
-    }
-
-    // 转换为 DTO
-    const output = plainToInstance(OutputFavoriteDto, favoriteWithRelations, {
-      excludeExtraneousValues: true,
-      exposeDefaultValues: true,
-    });
-
-    // 处理图片 URL
-    if (output.asset?.images) {
-      output.asset.images = output.asset.images.map(image => this.ossService.getSignatureUrl(image));
-      output.asset.coverImage = this.ossService.getSignatureUrl(output.asset.coverImage);
-    }
-
-    this.logger.log(`用户 ${userId} 收藏资产 ${dto.assetId}`);
-    return output;
+  async create(userId: string, dto: CreateFavoriteDto) {
+    return {} as any;
   }
 
   /**
@@ -118,14 +68,6 @@ export class FavoriteService {
     const listItems = plainToInstance(OutputFavoriteDto, favorites, {
       excludeExtraneousValues: true,
       exposeDefaultValues: true,
-    });
-
-    // 处理图片 URL
-    listItems.forEach(item => {
-      if (item.asset?.images) {
-        item.asset.images = item.asset.images.map(image => this.ossService.getSignatureUrl(image));
-        item.asset.coverImage = this.ossService.getSignatureUrl(item.asset.coverImage);
-      }
     });
 
     const meta = new PaginationMetaDto(dto.page, dto.pageSize);

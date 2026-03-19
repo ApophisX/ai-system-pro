@@ -15,7 +15,6 @@ import { PaymentRecordEntity } from './payment-record.entity';
 import { RefundRecordEntity } from './refund-record.entity';
 import { WithdrawalRecordEntity } from './withdrawal-record.entity';
 import { ColumnWithApi } from '@/common/decorators/column-with-api.decorator';
-import { RentalOrderEntity } from '@/modules/rental-order/entities';
 import Decimal from 'decimal.js';
 import dayjs from 'dayjs';
 import { InstallmentStatusLabelMap } from '../constants';
@@ -500,11 +499,6 @@ export class PaymentEntity extends BaseEntity {
   /**
    * 订单关系（多对一）
    */
-  @ManyToOne(() => RentalOrderEntity, order => order.payments, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'order_id' })
-  rentalOrder?: RentalOrderEntity;
 
   // ====================================== Virtual Fields ===========================================
 

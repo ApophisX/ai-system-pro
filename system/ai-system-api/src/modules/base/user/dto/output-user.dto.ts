@@ -38,12 +38,7 @@ export class OutputUserDetailProfileDto extends OmitType(UserProfileEntity, [
 /**
  * 简单的用户资料信息输出 DTO
  */
-export class OutputUserProfileBriefDto extends PickType(UserProfileEntity, [
-  'id',
-  'nickname',
-  'avatar',
-  'gender',
-] as const) {}
+export class OutputUserProfileBriefDto extends PickType(UserProfileEntity, ['id', 'nickname', 'gender'] as const) {}
 
 //-----------------------------------------------------------------------
 

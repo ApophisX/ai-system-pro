@@ -172,56 +172,6 @@ export class WxPayController {
     });
   }
 
-  // 微信押金退款回调通知
-  /**
-   * 接收微信押金退款的回调通知
-   * 文档：https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_3_11.shtml
-   *
-   * 处理流程：
-   * 1. 验证请求头是否完整
-   * 2. 验证签名确保请求来自微信
-   * 3. 检查事件类型是否为退款相关事件
-   * 4. 解密回调数据获取退款结果
-   * 5. 更新押金退款状态
-   * 6. 返回成功响应给微信
-   *
-   * 注意事项：
-   * - 微信可能会多次发送相同的回调，需要处理幂等性
-   * - 签名验证失败应返回 FAIL，微信会重试
-   * - 业务处理失败也应返回 FAIL，微信会重试
-   * - 返回 SUCCESS 后微信不再重试
-   */
-  @Post('refund-deposit-notify')
-  @HttpCode(HttpStatus.OK)
-  @ApiExcludeEndpoint()
-  @ApiOperation({
-    summary: '微信押金退款回调通知',
-    description: '接收微信押金退款的回调通知，验证签名并处理退款结果',
-  })
-  async refundDepositNotify(
-    @Req() req: RawBodyRequest,
-    @Body() body: WxPay.WxPayNotifyResponse,
-    @WxPayHeaders() headers: WxPayCallbackHeaders,
-  ): Promise<WxPay.ToWxPayNotifyResponse | undefined> {
-    const requestId = this.generateRequestId();
-    const callbackType = '押金退款';
-
-    return this.handleWxPayCallback(requestId, callbackType, req, body, headers, async () => {
-      // 3-5. 处理退款回调的公共逻辑（检查事件类型、解密、状态映射）
-      const refundData = this.processRefundCallback(requestId, body, callbackType);
-      if (!refundData) {
-        return { code: 'SUCCESS', message: '成功' };
-      }
-
-      const { result, refundStatus, logMessage } = refundData;
-      const { out_refund_no, refund_id } = result;
-
-      // 6. 处理押金退款回调（更新押金状态并发送事件）
-      await this.paymentService.handleDepositRefundCallback(out_refund_no, refund_id, refundStatus, result);
-      this.logger.log(`[${requestId}] 微信押金退款回调处理成功: ${logMessage}`);
-    });
-  }
-
   // ====================================== 通用方法 ===========================================
 
   /**

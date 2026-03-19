@@ -11,8 +11,6 @@ import { WECHAT_CONFIG_KEY, WeChatConfig, WeChatMiniProgramConfig } from '@/conf
 import { OutputAuthDto } from '../dto/output-auth.dto';
 import { UserProfileRepository } from '../../user/repositories';
 import { IsNull, Not } from 'typeorm';
-import { MerchantInviteEvents } from '@/modules/merchant-invite/events/merchant-invite.events';
-import { MerchantInviteRegisterService } from '@/modules/merchant-invite/services';
 
 @Injectable()
 export class WeappAuthService {
@@ -23,7 +21,6 @@ export class WeappAuthService {
     private readonly userRepo: UserRepository,
     private readonly userProfileRepo: UserProfileRepository,
     private readonly authService: AuthService,
-    private readonly merchantInviteRegister: MerchantInviteRegisterService,
     private readonly eventEmitter: EventEmitter2,
   ) {
     //
@@ -89,11 +86,6 @@ export class WeappAuthService {
    * 微信小程序登录 - 通过 code 获取 openid 和 session_key
    */
   async signIn(dto: WechatMiniProgramSignInDto) {
-    const inviteCode = dto.inviteCode?.trim();
-    if (inviteCode) {
-      await this.merchantInviteRegister.validateInviteCode(inviteCode);
-    }
-
     const [result1, result2] = await Promise.all([this.getPhoneNumber(dto.code), this.code2Session(dto.jsCode)]);
     const { phoneNumber } = result1.phone_info;
     const { openid, unionid } = result2;
@@ -124,13 +116,6 @@ export class WeappAuthService {
         user: user,
       });
       await this.userProfileRepo.save(profile);
-
-      if (inviteCode) {
-        this.eventEmitter.emit(MerchantInviteEvents.USER_REGISTERED_WITH_INVITE, {
-          userId: user.id,
-          inviteCode,
-        });
-      }
     }
     const { accessToken, refreshToken } = this.authService.generateTokens(user);
     return plainToInstance(OutputAuthDto, { accessToken, refreshToken, user });

@@ -195,6 +195,9 @@ export default [
   {
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     settings: { react: { version: 'detect' } },
   },

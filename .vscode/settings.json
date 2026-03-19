@@ -1,0 +1,3 @@
+{
+  "eslint.workingDirectories": ["system/ai-system-api", "system/ai-system-web", "system/ai-system-miniapp"]
+}

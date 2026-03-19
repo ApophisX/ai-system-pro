@@ -14,7 +14,6 @@ import { STRATEGY_JWT_AUTH } from './constants/strategy.constant';
 import { AUTH_CONFIG_KEY, AuthConfig } from '@/config';
 import { UserModule } from '../user/user.module';
 import { UserRepository } from '../user/repositories';
-import { MerchantInviteCoreModule } from '@/modules/merchant-invite/merchant-invite-core.module';
 import { CaptchaModule } from '../captcha/captcha.module';
 import { SmsModule } from '../sms/sms.module';
 import { WeappAuthController } from './controllers/weapp-auth.controller';
@@ -28,7 +27,6 @@ import { WeappAuthService } from './services/weapp-auth.service';
 @Module({
   imports: [
     UserModule,
-    MerchantInviteCoreModule,
     SmsModule,
     CaptchaModule,
     TypeOrmModule.forFeature([UserEntity]),
