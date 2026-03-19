@@ -4,17 +4,7 @@ import Taro, { useDidShow, useRouter } from '@tarojs/taro';
 import API from '@/services/API';
 import './index.less';
 import { PAYMENT_RESULT_STORAGE_KEY, SOURCE_PAGE_KEY } from '@/constants/app';
-import {
-  ErrorMessage,
-  ErrorPlaceholder,
-  FetchingBox,
-  PaymentTip,
-  SectionDepositInfo,
-  SectionInstallmentInfo,
-  SectionOrderInfo,
-  SectionOverdueFeeInfo,
-  SectionRenewalInfo,
-} from './components';
+import { ErrorMessage, ErrorPlaceholder, FetchingBox, PaymentTip, SectionOrderInfo } from './components';
 import { PAYMENT_TYPES, PAYMENT_TYPE_CONFIG, PaymentType } from './constants';
 
 type PaymentParams = {
@@ -22,7 +12,7 @@ type PaymentParams = {
   orderNo?: string;
   returnUrl?: string;
   type?: PaymentType;
-  paymentId?: string; // 分期支付时需要的支付ID
+  paymentId?: string;
 };
 
 export default function Payment() {
@@ -280,20 +270,8 @@ export default function Payment() {
               className={`absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 -mr-16 -mt-16 blur-xl ${paymentType === 'deposit' ? 'bg-blue-200' : paymentType === 'installment' || paymentType === 'renewal' ? 'bg-purple-200' : paymentType === 'overdue-fee' ? 'bg-red-200' : 'bg-teal-200'}`}
             />
 
-            {/* 租金支付 */}
+            {/* 订单支付 */}
             {paymentType === 'order' && <SectionOrderInfo orderInfo={orderInfo} />}
-
-            {/* 押金支付 */}
-            {paymentType === 'deposit' && <SectionDepositInfo orderInfo={orderInfo} />}
-
-            {/* 分期支付 */}
-            {isInstallment && <SectionInstallmentInfo orderInfo={orderInfo} paymentInfo={paymentInfo} />}
-
-            {/* 超时费用支付 */}
-            {paymentType === 'overdue-fee' && <SectionOverdueFeeInfo orderInfo={orderInfo} />}
-
-            {/* 续租支付 */}
-            {isRenewal && <SectionRenewalInfo paymentInfo={paymentInfo} orderInfo={orderInfo} />}
           </View>
         )}
 

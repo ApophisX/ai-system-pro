@@ -1,21 +1,10 @@
 export default defineAppConfig({
   pages: [
-    'pages/discover/index',
-    'pages/community/index',
-    'pages/community/search/index',
-    'pages/community/assets/index',
     'pages/home/index',
-    'pages/publish/index',
-    'pages/message/index',
-    'pages/webview/index',
-    'pages/goods/index',
     'pages/auth/login/index',
-    'pages/scan-qrcode/index',
     'pages/payment/index',
     'pages/auth/logout/index',
     'pages/user/index',
-    'pages/book/index',
-    'pages/order/list/index',
     'pages/setting/index',
   ],
   window: {
@@ -32,28 +21,10 @@ export default defineAppConfig({
     borderStyle: 'black', // 上边框颜色，可选 black / white
     list: [
       {
-        pagePath: 'pages/discover/index', // 页面路径
-        text: '发现', // tab文字
-        iconPath: `assets/icon/icon-discover.png`,
-        selectedIconPath: `assets/icon/icon-discover-active.png`,
-      },
-      {
-        pagePath: 'pages/community/index',
-        text: '社区',
-        iconPath: `assets/icon/icon-community.png`,
-        selectedIconPath: `assets/icon/icon-community-active.png`,
-      },
-      {
-        pagePath: 'pages/publish/index', // 页面路径
-        text: '发布好物', // tab文字
-        iconPath: `assets/icon/icon-publish.png`,
-        selectedIconPath: `assets/icon/icon-publish-active.png`,
-      },
-      {
-        pagePath: 'pages/message/index',
-        text: '消息通知',
-        iconPath: `assets/icon/icon-bell.png`,
-        selectedIconPath: `assets/icon/icon-bell-active.png`,
+        pagePath: 'pages/home/index', // 页面路径
+        text: '首页', // tab文字
+        iconPath: `assets/icon/icon-home.png`,
+        selectedIconPath: `assets/icon/icon-home-active.png`,
       },
       {
         pagePath: 'pages/user/index',
